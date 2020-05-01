@@ -9,6 +9,7 @@ namespace Models
         public int z;
         public int y;
         
+        //TODO: get rid of 3x arrays, adjacency arrays in Tile class
         public bool[] AdjacencyArray = new bool[14]; 
         // adjacencyMap
         // [TopNorth, TopEast, TopSouth, TopWest, Top,

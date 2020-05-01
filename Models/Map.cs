@@ -62,6 +62,7 @@ namespace Models
             this.zOffset = zOffset;
             this.yOffset = yOffset;
 
+            //TODO: get rid of 3x arrays, adjacency arrays in Tile class
             tiles = new Tile[width, length, floorCount];
             distanceList = new Tile[width, length, floorCount];
 

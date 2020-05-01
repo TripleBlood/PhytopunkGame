@@ -5,6 +5,10 @@ namespace Models
 {
     public class Tile
     {
+        public int x;
+        public int z;
+        public int y;
+        
         public bool[] AdjacencyArray = new bool[14]; 
         // adjacencyMap
         // [TopNorth, TopEast, TopSouth, TopWest, Top,
@@ -26,6 +30,18 @@ namespace Models
             CharacterOnTile = null;
             IsIlluminated = true;
         }
+
+        public Tile(int x, int z, int y)
+        {
+            this.x = x;
+            this.z = z;
+            this.y = y;
+            occupied = false;
+            CharacterOnTile = null;
+            IsIlluminated = true;
+            traversable = false;
+        }
+
         /** ————————————————————————————————————————————————————————————————
          * Occupation status methods
          */

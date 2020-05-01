@@ -59,7 +59,8 @@ public class ObjectControl : MonoBehaviour
                 Camera.main.ScreenPointToRay(Input.mousePosition).direction * 100, Color.cyan, 15);
 
             RaycastHit hitInfo = new RaycastHit();
-            bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, mask);
+            bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity,
+                mask);
 
             Debug.DrawRay(Camera.main.ScreenPointToRay(Input.mousePosition).origin,
                 Camera.main.ScreenPointToRay(Input.mousePosition).direction, Color.cyan);
@@ -84,6 +85,28 @@ public class ObjectControl : MonoBehaviour
                         ;
                     Debug.Log(str);
                     Debug.Log(logger);
+                    Debug.Log("---------");
+                    string dictstrCheck = "Adj tiles: ";
+
+                    Tile tile;
+                    if (map.mapTileDict.TryGetValue(MapUtils.GetTileHash(array[0], array[1], array[2]), out tile))
+                    {
+                        List<Tile> list = MapUtils.getTilesByAdjDict(map, tile.x, tile.z, tile.y);
+                        foreach (Tile tile1 in list)
+                        {
+                            dictstrCheck += tile1.x + ", " + tile1.z + ", " + tile1.y + "| ";
+                        }
+                    }
+
+                    Debug.Log(dictstrCheck);
+
+                    string pathstr = ""; 
+                    List<Tile> path = MapUtils.findPath(map, map.findTile(12, 13, 1), map.findTile(12, 16, 0));
+                    foreach (Tile VARIABLE in path)
+                    {
+                        pathstr += VARIABLE.x + ", " + VARIABLE.z + ", " + VARIABLE.y + " ---> ";
+                    }
+                    Debug.Log(pathstr);
                 }
             }
 

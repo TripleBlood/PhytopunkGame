@@ -34,12 +34,12 @@ public class GameManager : MonoBehaviour
                 Collider[] characterColliders =
                     Physics.OverlapSphere(controlledCharacter.transform.position, 50, characterMask);
                 
-                List<CharacterControl> characters = new List<CharacterControl>();
+                List<BattleController> characters = new List<BattleController>();
 
                 foreach (Collider characterCollider in characterColliders)
                 {
                     //Expensive
-                    characters.Add(characterCollider.gameObject.GetComponent<CharacterControl>());
+                    characters.Add(characterCollider.gameObject.GetComponent<BattleController>());
                 }
                 currentBattleManager.BuildQueue(characters);
 

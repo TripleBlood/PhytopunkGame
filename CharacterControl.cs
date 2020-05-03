@@ -46,6 +46,7 @@ namespace DefaultNamespace
         public List<Effect> effects;
         
         private Character _character;
+        
         void Start()
         {
             // Initiate character variable should be from savefile, but for now it's created form default constructor

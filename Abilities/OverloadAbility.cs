@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using Models;
 
 namespace DefaultNamespace
@@ -16,10 +18,9 @@ namespace DefaultNamespace
             this.targetType = true;
         }
 
-        public override bool CastAbility(Tile target)
+        public override void EndEvent(out bool busy)
         {
             throw new System.NotImplementedException();
-            
         }
     }
 }

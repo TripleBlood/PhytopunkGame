@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
 using UnityEngine;
 
 public abstract class BattleController  : MonoBehaviour
@@ -18,5 +19,16 @@ public abstract class BattleController  : MonoBehaviour
     /// I suppose, that disabling/destruction should be here, but final thing should be executed
     /// in additional coroutine.
     /// </summary>
-    public abstract void EndTurnMethod();
+    public abstract void EndTurnBC();
+
+    /// <summary>
+    /// Start of turn behavior
+    /// </summary>
+    public abstract void BeginTurn();
+
+    /// <summary>
+    /// Current Controller for ui, Targeting Systems. NEed to block Input access if not User's unit turn
+    /// </summary>
+    public TargetingController currentTargetingControl;
+    
 }

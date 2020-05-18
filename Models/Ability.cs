@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Models
 {
-    public abstract class Ability
+    public abstract class Ability : EventBattle
     {
         //TODO: check how readonly works
         public string name;
@@ -19,11 +19,5 @@ namespace Models
 
         public List<Effect> effectList;
         
-        /// <summary>
-        /// Describes ability's behavior
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public abstract bool CastAbility(Tile target);
     }
 }

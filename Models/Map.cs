@@ -9,6 +9,9 @@ namespace Models
 {
     public class Map
     {
+
+        public bool testField = true;
+        
         public float bottomFloorLevel;
 
         public Tile[,,] tiles;
@@ -18,8 +21,19 @@ namespace Models
         public Dictionary<string, bool> mapAdjDict;
         public Dictionary<string, int> mapCoverDict;
 
+        /// <summary>
+        /// X-component of map
+        /// </summary>
         public int width; // x
+
+        /// <summary>
+        /// Z-component of map
+        /// </summary>
         public int length; // z
+
+        /// <summary>
+        /// Y-component of map
+        /// </summary>
         public int floorCount; // y
 
         private float xOffset { get; set; }
@@ -61,6 +75,8 @@ namespace Models
             this.xOffset = xOffset;
             this.zOffset = zOffset;
             this.yOffset = yOffset;
+
+            this.testField = true;
 
             //TODO: get rid of 3x arrays, adjacency arrays in Tile class
             tiles = new Tile[width, length, floorCount];
@@ -423,7 +439,14 @@ namespace Models
             }
         }
 
-        public Tile findTile(int x, int z, int y)
+        /// <summary>
+        /// Gets tile 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public Tile FindTile(int x, int z, int y)
         {
             string str = MapUtils.GetTileHash(x, z, y);
             Tile tile = new Tile();
@@ -451,6 +474,90 @@ namespace Models
         }
 
         /// <summary>
+        /// Get coordinates in space of tile by Tile indecies
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <param name="y"></param>
+        /// <returns> Coordinates in space as Vector3 </returns>
+        public Vector3 GetCoordByTileIndexes(int x, int z, int y)
+        {
+            int mask = 1 << 9;
+            mask = ~mask;
+
+            RaycastHit hitInfo = new RaycastHit();
+            bool hit = Physics.Raycast(GetOriginPointForTopDownVect(x, z, y), Vector3.down,
+                out hitInfo, 3, mask);
+
+            if (hit && hitInfo.transform.gameObject.tag.Equals("Floor"))
+            {
+                Vector3 vect = hitInfo.point;
+                return vect;
+            }
+
+            return new Vector3(xOffset + x, y * 3, zOffset + z);
+        }
+
+        /// <summary>
+        /// Get coordinates in space for tile where inputVector is located 
+        /// </summary>
+        /// <param name="inputVector"></param>
+        /// <returns></returns>
+        public Vector3 GetCourserPosition(Vector3 inputVector)
+        {
+            int[] point = GetTileIndexesByCoords(inputVector);
+            return GetCoordByTileIndexes(point[0], point[1], point[2]);
+        }
+
+        /// <summary>
+        /// Gets Tile by point in space
+        /// </summary>
+        /// <param name="inputVector"></param>
+        /// <returns></returns>
+        public Tile GetTileByVectorPoint(Vector3 inputVector)
+        {
+            int[] point = GetTileIndexesByCoords(inputVector);
+            string strHash = MapUtils.GetTileHash(point[0], point[1], point[2]);
+            return FindTile(point[0], point[1], point[2]);
+        }
+
+        /// <summary>
+        /// Input GameObject occupies tile
+        /// </summary>
+        /// <param name="occupier"></param>
+        /// <param name="tile"></param>
+        /// <returns>Returns bool if occupation is successful.</returns>
+        public bool OccupyTile(GameObject occupier, Tile tile)
+        {
+            if (!tile.occupied)
+            {
+                tile.characterOnTile = occupier;
+                tile.occupied = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Input GameObject leaves tile. Additional check whether input gameObject leaves tile... Don't know why I've wrote it... 
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <param name="gameObject"></param>
+        /// <returns></returns>
+        public bool LeaveTile(Tile tile, GameObject gameObject)
+        {
+            if (gameObject == tile.characterOnTile)
+            {
+                tile.characterOnTile = null;
+                tile.occupied = false;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Returns vector required for initial map tiles' traversability check 
         /// </summary>
         /// <param name="x">X component of the vector</param>
@@ -466,7 +573,10 @@ namespace Models
         /// Returns vector of current map indexes of adjacent tile (x, z, y). Returns (-1, -1, -1) if exceeds bounds (width, length, floorCount)
         /// TODO: Rewrite. This part has been wrote in retarded way for whatever fucking reason...
         /// </summary>
-        /// <param name="adjIndex">Adjacency Index</param>
+        /// <param name="adjIndex">Adjacency Index
+        /// TopNorth, TopEast, TopSouth, TopWest, Top
+        /// North,    East,    South,    West,
+        /// BotNorth, BotEast, BotSouth, BotWest, Bot</param>
         /// <param name="x">X component of the tile which neighbor we are looking for</param>
         /// <param name="z">Z component of the tile which neighbor we are looking for</param>
         /// <param name="y">Y component of the tile which neighbor we are looking for</param>

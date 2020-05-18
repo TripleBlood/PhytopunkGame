@@ -22,13 +22,13 @@ namespace Models
 
         public bool traversable;
         public bool occupied;
-        public GameObject CharacterOnTile;
+        public GameObject characterOnTile;
 
         public bool IsIlluminated; 
         public Tile()
         {
             occupied = false;
-            CharacterOnTile = null;
+            characterOnTile = null;
             IsIlluminated = true;
         }
 
@@ -38,7 +38,7 @@ namespace Models
             this.z = z;
             this.y = y;
             occupied = false;
-            CharacterOnTile = null;
+            characterOnTile = null;
             IsIlluminated = true;
             traversable = false;
         }
@@ -47,9 +47,7 @@ namespace Models
          * Occupation status methods
          */
 
-        /**
-         * Initial occupation of tile
-         */
+        
         public void Occupy(GameObject model, int xOffset, int zOffset, Vector3 mapMetrics)
         {
             if (occupied)
@@ -72,7 +70,7 @@ namespace Models
         public void Leave()
         {
             occupied = false;
-            CharacterOnTile = null;
+            characterOnTile = null;
         }
 
         /**
@@ -83,7 +81,7 @@ namespace Models
             if (!occupied)
             {
                 occupied = true;
-                CharacterOnTile = model;
+                characterOnTile = model;
                 
                 //TODO: Object movement (method additionally requires map metrics and offset parameters), 
                 //TODO: Requires move() method (with proper pathfinding algorithm)

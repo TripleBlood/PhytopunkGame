@@ -94,7 +94,15 @@ namespace DefaultNamespace.Utils
             return tileHash;
         }
 
-        public static List<Tile> getTilesByAdjDict(Map map, int x, int z, int y)
+        /// <summary>
+        /// Retrieve List of adjacent Tiles (occupation check not included)
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static List<Tile> GetAdjTilesNoOccCheck(Map map, int x, int z, int y)
         {
             List<Tile> result = new List<Tile>();
 
@@ -126,7 +134,51 @@ namespace DefaultNamespace.Utils
             return result;
         }
 
-        public static List<Tile> findPath(Map map, Tile start, Tile goal)
+        /// <summary>
+        /// Retrieve List of passable adjacent Tiles (occupation check included)
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static List<Tile> GetAdjTilesWithOccCheck(Map map, int x, int z, int y)
+        {
+            List<Tile> result = new List<Tile>();
+
+            string basepointHash = MapUtils.GetTileHash(x, z, y);
+            Tile basePointTile;
+            if (map.mapTileDict.TryGetValue(basepointHash, out basePointTile))
+            {
+                for (int i = 0; i < 14; i++)
+                {
+                    int[] indecies2 = map.GetTileIndexesByAdjIndex(i, x, z, y);
+                    string adjPointHash = GetTileHash(indecies2[0], indecies2[1], indecies2[2]);
+
+                    string adjDictHash = MapUtils.FormMapHash(x, y, z,
+                        indecies2[0], indecies2[2], indecies2[1]);
+
+                    Tile adjPoint;
+                    bool hit = false;
+
+                    if (map.mapTileDict.TryGetValue(adjPointHash, out adjPoint))
+                    {
+                        if (map.mapAdjDict.TryGetValue(adjDictHash, out hit))
+                        {
+                            // Check if something is standing on tile
+                            if (!adjPoint.occupied)
+                            {
+                                result.Add(adjPoint);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static List<Tile> FindPath(Map map, Tile start, Tile goal)
         {
             List<Tile> path = new List<Tile>();
             SimplePriorityQueue<Tile> frontier = new SimplePriorityQueue<Tile>();
@@ -150,7 +202,7 @@ namespace DefaultNamespace.Utils
                     break;
                 }
 
-                foreach (Tile next in MapUtils.getTilesByAdjDict(map, currentTile.x, currentTile.z, currentTile.y))
+                foreach (Tile next in MapUtils.GetAdjTilesWithOccCheck(map, currentTile.x, currentTile.z, currentTile.y))
                 {
                     int newCost;
 
@@ -185,6 +237,9 @@ namespace DefaultNamespace.Utils
             }
             path.Add(start);
             path.Reverse();
+            
+            path.RemoveAt(0);
+            
             return path;
         }
 
@@ -192,5 +247,7 @@ namespace DefaultNamespace.Utils
         {
             return Math.Abs(start.x - finish.x) + Math.Abs(start.y - finish.y) + Math.Abs(start.z + finish.z);
         }
+        
+        
     }
 }

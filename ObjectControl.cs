@@ -91,7 +91,7 @@ public class ObjectControl : MonoBehaviour
                     Tile tile;
                     if (map.mapTileDict.TryGetValue(MapUtils.GetTileHash(array[0], array[1], array[2]), out tile))
                     {
-                        List<Tile> list = MapUtils.getTilesByAdjDict(map, tile.x, tile.z, tile.y);
+                        List<Tile> list = MapUtils.GetAdjTilesNoOccCheck(map, tile.x, tile.z, tile.y);
                         foreach (Tile tile1 in list)
                         {
                             dictstrCheck += tile1.x + ", " + tile1.z + ", " + tile1.y + "| ";
@@ -100,8 +100,9 @@ public class ObjectControl : MonoBehaviour
 
                     Debug.Log(dictstrCheck);
 
-                    string pathstr = ""; 
-                    List<Tile> path = MapUtils.findPath(map, map.findTile(12, 13, 1), map.findTile(12, 16, 0));
+                    map.OccupyTile(ring, map.FindTile(11, 13, 1));
+                    string pathstr = "";
+                    List<Tile> path = MapUtils.FindPath(map, map.FindTile(12, 13, 1), map.FindTile(12, 16, 0));
                     foreach (Tile VARIABLE in path)
                     {
                         pathstr += VARIABLE.x + ", " + VARIABLE.z + ", " + VARIABLE.y + " ---> ";

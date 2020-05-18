@@ -25,16 +25,25 @@ public class ObjectControl : MonoBehaviour
     private List<int[]> currentPathList;
     public GameObject ring;
 
+    private BattleManager currentBattleManager;
+
     // Start is called before the first frame update
 
     void Start()
     {
         destination = transform.position;
+        
+        int battlemask = 1 << 10;
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 50, battlemask);
+
+        if (hitColliders.Length > 0)
+        {
+            currentBattleManager = hitColliders[0].gameObject.GetComponent<BattleManager>();
+        }
 
         try
         {
-            Map mapp = new Map(2, 28, 27, -11, 7, 0);
-            this.map = mapp;
+            this.map = currentBattleManager.map;
         }
         catch (MissingComponentException e)
         {
@@ -88,10 +97,10 @@ public class ObjectControl : MonoBehaviour
                     Debug.Log("---------");
                     string dictstrCheck = "Adj tiles: ";
 
-                    Tile tile;
-                    if (map.mapTileDict.TryGetValue(MapUtils.GetTileHash(array[0], array[1], array[2]), out tile))
+                    Tile tile = map.FindTile(array[0], array[1], array[2]);
+                    if ( true/*map.mapTileDict.TryGetValue(MapUtils.GetTileHash(array[0], array[1], array[2]), out tile)*/)
                     {
-                        List<Tile> list = MapUtils.GetAdjTilesNoOccCheck(map, tile.x, tile.z, tile.y);
+                        List<Tile> list = MapUtils.GetAdjTilesWithOccCheck(map, tile.x, tile.z, tile.y);
                         foreach (Tile tile1 in list)
                         {
                             dictstrCheck += tile1.x + ", " + tile1.z + ", " + tile1.y + "| ";

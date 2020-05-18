@@ -19,14 +19,7 @@ namespace Models
         // public abstract void Initiate();
 
         public abstract void EndEvent(out bool busy);
-            
-        /// <summary>
-        /// Describes event behavior
-        /// </summary>
-        /// <returns>Coroutine command sequence</returns>
-        //public abstract IEnumerator Behavior(out bool busy);
-
-        public List<IEnumerator> listOfCoroutines;
+       
 
     }
 }

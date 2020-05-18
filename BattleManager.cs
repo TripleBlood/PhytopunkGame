@@ -5,6 +5,7 @@ using DefaultNamespace;
 using Models;
 using Unity.UNetWeaver;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class BattleManager : MonoBehaviour
 {
@@ -59,13 +60,24 @@ public class BattleManager : MonoBehaviour
     /// Climate changes, random events, dialogs etc.
     /// </summary>
     /// <param name="characters"></param>
-    public void BuildQueue(List<BattleController> characters)
+    public void BuildQueue(List<CharacterBattleController> characters)
     {
         // Implement this method if queue should be built in specific way,
         // but now here's placeholder
         // To each BattleController should be binned active instance of BattleManager
 
-        battleControllersQueue = characters;
+        Type type = typeof(InitiatePositions);
+        InitiatePositions initiateEvent = (InitiatePositions)gameObject.AddComponent(type);
+        initiateEvent.battleManager = this;
+        initiateEvent.SetCharacters(characters);
+        initiateEvent.map = map;
+        //
+        // battleControllersQueue = (List<BattleController>)characters;
+
+        foreach (CharacterBattleController character in characters)
+        {
+            battleControllersQueue.Add(character);
+        }
 
         foreach (BattleController battleController in battleControllersQueue)
         {
@@ -73,17 +85,14 @@ public class BattleManager : MonoBehaviour
 
             if (battleController.GetType() == typeof(CharacterBattleController))
             {
-                Debug.Log(battleController.gameObject.name);
+                //Debug.Log(battleController.gameObject.name);
             }
         }
+
+        initiateEvent.active = true;
         
 
         StartTurn();
-    }
-
-    public void initialOccupation(BattleController battleController)
-    {
-        
     }
 
     /// <summary>
@@ -104,6 +113,7 @@ public class BattleManager : MonoBehaviour
         currentBattleController = battleControllersQueue[0];
         currentBattleController.enabled = true;
 
+        // This should be in BattleController?
         currentTargetController.currentBattleController = currentBattleController;
         currentTargetController.Construct(this, map, currentBattleController);
 

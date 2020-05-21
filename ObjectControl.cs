@@ -81,23 +81,27 @@ public class ObjectControl : MonoBehaviour
                     Vector3 point = hitInfo.point;
                     array = map.GetTileIndexesByCoords(point);
                     Debug.Log(array[0] + ", " + array[1] + ", " + array[2] + ", ");
+                    
+                    Tile tile = map.FindTile(array[0], array[1], array[2]);
+                    
                     string str = "";
                     foreach (var VARIABLE in map.tiles[array[0], array[1], array[2]].AdjacencyArray)
                     {
                         str += VARIABLE + ", ";
                     }
 
-                    string logger = "North:" + map.tiles[array[0], array[1], array[2]].CoverArray[0] +
-                                    " East: " + map.tiles[array[0], array[1], array[2]].CoverArray[1] +
-                                    " South: " + map.tiles[array[0], array[1], array[2]].CoverArray[2] +
-                                    " West: " + map.tiles[array[0], array[1], array[2]].CoverArray[3]
+                    string logger = "North:" + tile.CoverArray[0] +
+                                    " East: " + tile.CoverArray[1] +
+                                    " South: " + tile.CoverArray[2] +
+                                    " West: " + tile.CoverArray[3]
                         ;
-                    Debug.Log(str);
+                    //Debug.Log(str);
                     Debug.Log(logger);
                     Debug.Log("---------");
+                    
                     string dictstrCheck = "Adj tiles: ";
 
-                    Tile tile = map.FindTile(array[0], array[1], array[2]);
+                    
                     if ( true/*map.mapTileDict.TryGetValue(MapUtils.GetTileHash(array[0], array[1], array[2]), out tile)*/)
                     {
                         List<Tile> list = MapUtils.GetAdjTilesWithOccCheck(map, tile.x, tile.z, tile.y);
@@ -107,16 +111,17 @@ public class ObjectControl : MonoBehaviour
                         }
                     }
 
-                    Debug.Log(dictstrCheck);
+                    //Debug.Log(dictstrCheck);
 
                     map.OccupyTile(ring, map.FindTile(11, 13, 1));
+                    
                     string pathstr = "";
                     List<Tile> path = MapUtils.FindPath(map, map.FindTile(12, 13, 1), map.FindTile(12, 16, 0));
                     foreach (Tile VARIABLE in path)
                     {
                         pathstr += VARIABLE.x + ", " + VARIABLE.z + ", " + VARIABLE.y + " ---> ";
                     }
-                    Debug.Log(pathstr);
+                    //Debug.Log(pathstr);
                 }
             }
 

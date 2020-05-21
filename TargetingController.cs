@@ -8,6 +8,7 @@ namespace DefaultNamespace
         public Ability ability;
         public BattleManager battleManager;
         public Map map;
+        public Canvas mainUI;
 
         /// <summary>
         /// Method should create new instatnce of Event/Ability class and send it to BattleManager
@@ -17,6 +18,8 @@ namespace DefaultNamespace
         public BattleController currentBattleController;
 
         public abstract void Construct(BattleManager battleManager, Map map, BattleController currentBattleController);
+        public abstract void EndTargeting();
 
     }
 }
+

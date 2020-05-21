@@ -16,7 +16,7 @@ namespace Models
         //  North,    East,    South,    West,
         //  BotNorth, BotEast, BotSouth, BotWest, Bot]
         
-        public byte[] CoverArray = new byte[4]; //byte to economize memory
+        public int[] CoverArray = new int[4]; //byte to economize memory
         // [North,    East,    South,    West]
         // 0 for no Cover, 1 for low, 2 for high
 

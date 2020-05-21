@@ -7,19 +7,13 @@ namespace Models
 {
     public abstract class EventBattle : MonoBehaviour
     {
-        // TODO: Revise. May be I don't need this. (Most likely I don't)
-        // public GameObject caster;
-        // public List<GameObject> target;
-        // public List<Tile> tiles;
-
         public BattleManager battleManager;
-        public bool active;
+        public bool active = false;
+        public bool initiated = false;
 
         // Don't need this, because Event initiated in targeting controller
         // public abstract void Initiate();
 
         public abstract void EndEvent(out bool busy);
-       
-
     }
 }

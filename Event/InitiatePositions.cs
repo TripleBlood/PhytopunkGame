@@ -90,15 +90,17 @@ namespace UnityEngine.Rendering
 
             characterBattleController.gameObject.transform.position = destination + new Vector3(0, 0.7f, 0);
 
-            Debug.Log(map.FindTile(currentTile.x, currentTile.z, currentTile.y).occupied);
-            
+            //Debug.Log(map.FindTile(currentTile.x, currentTile.z, currentTile.y).occupied);
+
             map.OccupyTile(characterBattleController.gameObject, currentTile);
-           
-            Debug.Log(map.FindTile(currentTile.x, currentTile.z, currentTile.y).occupied + " " + 
-                      map.FindTile(currentTile.x, currentTile.z, currentTile.y).characterOnTile.name);
+
+            //Debug.Log(map.FindTile(currentTile.x, currentTile.z, currentTile.y).occupied + " " + map.FindTile(currentTile.x, currentTile.z, currentTile.y).characterOnTile.name);
+
+            Tile tile = characterBattleController.characterDataComponent.position; 
+            Debug.Log(characterBattleController.characterDataComponent.name + " is on tile: " + tile.x + ", "  + tile.z + ", " + tile.y);
             
-            Debug.Log(battleManager.map == map);
-            
+            //Debug.Log(battleManager.map == map);
+
             list[index] = true;
         }
 

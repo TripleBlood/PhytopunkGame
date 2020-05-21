@@ -58,6 +58,9 @@ namespace DefaultNamespace
         /// Stores
         /// </summary>
         public List<Type> targetControllerTypes;
+
+        public List<int> abilityCooldowns;
+        
         public List<Effect> effects;
         
         private Character _character;
@@ -72,6 +75,7 @@ namespace DefaultNamespace
             foreach (string ability in abilities)
             {
                 targetControllerTypes.Add(AbilityUtils.GetTargetingControllerType(ability));
+                abilityCooldowns.Add(0);
             }
             // throw new NotImplementedException();
         }

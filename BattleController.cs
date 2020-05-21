@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace;
+using Models;
 using UnityEngine;
 
 public abstract class BattleController  : MonoBehaviour
 {
     public BattleManager battleManager;
+    public Map map;
     // This is very strange thing I'm doing
     // I want to put into BattleQueue different type controllers
     // for example: basic Character controller, end of turn cycle,
@@ -29,6 +31,5 @@ public abstract class BattleController  : MonoBehaviour
     /// <summary>
     /// Current Controller for ui, Targeting Systems. NEed to block Input access if not User's unit turn
     /// </summary>
-    public TargetingController currentTargetingControl;
-    
+    public TargetingController currentTargetingController;
 }

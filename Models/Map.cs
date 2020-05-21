@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DefaultNamespace;
 using DefaultNamespace.Utils;
 using UnityEngine;
 using static Models.Tile;
@@ -9,9 +10,8 @@ namespace Models
 {
     public class Map
     {
-
         public bool testField = true;
-        
+
         public float bottomFloorLevel;
 
         public Tile[,,] tiles;
@@ -113,8 +113,8 @@ namespace Models
                     out hitInfo, 3, mask);
                 if (hit && hitInfo.transform.gameObject.tag.Equals("Floor"))
                 {
-                    Debug.DrawLine(GetOriginPointForTopDownVect(xbuffer, zbuffer, ybuffer), hitInfo.point, Color.green,
-                        2);
+                    // Debug.DrawLine(GetOriginPointForTopDownVect(xbuffer, zbuffer, ybuffer), hitInfo.point, Color.green,
+                    //     2);
                     //Debug.Log(hitInfo.point);
                     GetTileIndexesByCoords(hitInfo.point);
                     if ((hitInfo.transform.gameObject.tag.Equals("Floor")) &&
@@ -131,6 +131,8 @@ namespace Models
                 int xbuffer = tile.Value.x;
                 int zbuffer = tile.Value.z;
                 int ybuffer = tile.Value.y;
+
+                Tile actualTile = tile.Value;
 
                 RaycastHit hitInfo = new RaycastHit();
                 bool hit = Physics.Raycast(GetOriginPointForTopDownVect(xbuffer, zbuffer, ybuffer), Vector3.down,
@@ -222,16 +224,24 @@ namespace Models
                                     if (hitHigh)
                                     {
                                         buffer = GetTileIndexesByAdjIndex(l + 5, xbuffer, zbuffer, ybuffer);
-                                        if (!buffer.SequenceEqual(new int[] {-1, -1, -1}) &&
-                                            !mapCoverDict.ContainsKey(MapUtils.FormMapHash(buffer[0], buffer[2],
-                                                buffer[1], xbuffer, ybuffer, zbuffer)))
+                                        if (!buffer.SequenceEqual(new int[] {-1, -1, -1}))
                                         {
-                                            mapCoverDict.Add(MapUtils.FormMapHash(buffer[0], buffer[2], buffer[1],
-                                                xbuffer, ybuffer, zbuffer), 2);
+                                            if (!mapCoverDict.ContainsKey(MapUtils.FormMapHash(buffer[0], buffer[2],
+                                                buffer[1], xbuffer, ybuffer, zbuffer)))
+                                            {
+                                                mapCoverDict.Add(MapUtils.FormMapHash(buffer[0], buffer[2], buffer[1],
+                                                    xbuffer, ybuffer, zbuffer), 2);
+                                            }
+
+                                            Debug.DrawLine(pointForAdj, highHitInfo.point, Color.green, 25);
+
+                                            actualTile.CoverArray[l] = 2;
                                         }
                                     }
                                     else
                                     {
+                                        //Debug.DrawLine(pointForAdj, pointForAdj + checkVectorsArrHighCover[l], Color.green, 25);
+
                                         if (adjPointCoord[2] + floorDifference > -1 &&
                                             adjPointCoord[2] + floorDifference < floorCount &&
                                             tiles[adjPointCoord[0], adjPointCoord[1],
@@ -269,12 +279,15 @@ namespace Models
                                         }
 
                                         buffer = GetTileIndexesByAdjIndex(l, xbuffer, zbuffer, ybuffer);
-                                        if (!buffer.SequenceEqual(new int[] {-1, -1, -1}) && !mapCoverDict.ContainsKey(
-                                            MapUtils.FormMapHash(buffer[0], buffer[2],
-                                                buffer[1], xbuffer, ybuffer, zbuffer)))
+                                        if (!buffer.SequenceEqual(new int[] {-1, -1, -1}))
                                         {
-                                            mapCoverDict.Add(MapUtils.FormMapHash(buffer[0], buffer[2], buffer[1],
-                                                xbuffer, ybuffer, zbuffer), 1);
+                                            if (!mapCoverDict.ContainsKey(MapUtils.FormMapHash(buffer[0], buffer[2],
+                                                buffer[1], xbuffer, ybuffer, zbuffer)))
+                                            {
+                                                mapCoverDict.Add(MapUtils.FormMapHash(buffer[0], buffer[2], buffer[1],
+                                                    xbuffer, ybuffer, zbuffer), 1);
+                                            }
+                                            actualTile.CoverArray[l] = 1;
                                         }
 
                                         // tiles[i, j, k].CoverArray[l] = 1;
@@ -290,153 +303,155 @@ namespace Models
             // TODO: can I split this to multiple threads?
             Debug.Log(tiles.GetLength(0) + ", " + tiles.GetLength(1) + ", " + tiles.GetLength(2));
 
-            for (int i = 0; i < tiles.GetLength(0); i++)
-            {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    for (int k = 0; k < tiles.GetLength(2); k++)
-                    {
-                        RaycastHit hitInfo = new RaycastHit();
-                        bool hit = Physics.Raycast(GetOriginPointForTopDownVect(i, j, k), Vector3.down, out hitInfo, 3,
-                            mask);
-                        if (hit)
-                        {
-                            //Console.WriteLine(hitInfo.point);
-                            if (k == 1)
-                            {
-                                //Debug.DrawLine(GetOriginPointForTopDownVect(i, j, k), hitInfo.point, Color.green, 2);
-                            }
-
-                            //Debug.DrawLine(GetOriginPointForTopDownVect(i, j, k), hitInfo.point, Color.green, 2);
-                            //Debug.Log(hitInfo.point);
-                            GetTileIndexesByCoords(hitInfo.point);
-                            if ((hitInfo.transform.gameObject.tag.Equals("Floor")) &&
-                                GetTileIndexesByCoords(hitInfo.point).SequenceEqual(new int[] {i, j, k})
-                            )
-                            {
-                                tiles[i, j, k].traversable = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // This cycle checks adjacency and covers
-            for (int i = 0; i < tiles.GetLength(0); i++)
-            {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    for (int k = 0; k < tiles.GetLength(2); k++)
-                    {
-                        RaycastHit hitInfo = new RaycastHit();
-                        bool hit = Physics.Raycast(GetOriginPointForTopDownVect(i, j, k), Vector3.down, out hitInfo, 3,
-                            mask);
-                        if (hit)
-                        {
-                            if (hitInfo.transform.gameObject.tag.Equals("Floor") &&
-                                GetTileIndexesByCoords(hitInfo.point).SequenceEqual(new int[] {i, j, k})
-                            )
-                            {
-                                Vector3 pointForAdj = hitInfo.point + upVect;
-
-                                // hit = Physics.Raycast(pointForAdj, new Vector3(0, -1.3f, 0.6f),out hitInfo);
-
-                                for (int l = 0; l < 4; l++)
-                                {
-                                    // 
-                                    RaycastHit adjHitInfo;
-                                    bool adjHit = Physics.Raycast(pointForAdj, checkVectorsArrLowCover[l],
-                                        out adjHitInfo, 3.65f, mask);
-                                    if (adjHit)
-                                    {
-                                        int[] hitPointCoord =
-                                            GetTileIndexesByCoords(adjHitInfo.point); //Where raycast hit
-                                        int[] adjPointCoord =
-                                            GetTileIndexesByAdjIndex(l + 5, i, j,
-                                                k); //Where raycast "supposed" to hit
-
-                                        if (adjHitInfo.transform.gameObject.tag.Equals("Ladder") &&
-                                            hitPointCoord.SequenceEqual(new int[] {i, j, k})
-                                        ) // If hit ladder withing tile
-                                        {
-                                            tiles[i, j, k].AdjacencyArray[l] = true;
-                                            //tiles[i, j, k].AdjacencyArray[4] = true;
-                                            //TODO: check uses
-                                            int[] ladderTile = GetTileIndexesByAdjIndex(l, i, j, k);
-                                            if (!ladderTile.SequenceEqual(new int[] {-1, -1, -1}))
-                                            {
-                                                tiles[ladderTile[0], ladderTile[1], ladderTile[2]]
-                                                    .AdjacencyArray[((l + 2) % 4) + 9] = true;
-                                            }
-                                        }
-                                        else if (adjHitInfo.transform.gameObject.tag.Equals("Floor") &&
-                                                 hitPointCoord[0] == adjPointCoord[0] &&
-                                                 hitPointCoord[1] == adjPointCoord[1] &&
-                                                 Math.Abs(hitPointCoord[2] - adjPointCoord[2]) < 2
-                                            // Same floor or 1 floor higher/lower
-                                        ) // Not sure whether I check all possible clauses...
-                                        {
-                                            if (hitPointCoord[2] > adjPointCoord[2]) //1 floor higher
-                                            {
-                                                tiles[i, j, k].AdjacencyArray[l] = true;
-                                            }
-                                            else if (hitPointCoord[2] == adjPointCoord[2]) //same floor
-                                            {
-                                                tiles[i, j, k].AdjacencyArray[l + 5] = true;
-                                            }
-                                            else //floor lower
-                                            {
-                                                tiles[i, j, k].AdjacencyArray[l + 9] = true;
-                                            }
-                                        }
-                                        else if (Math.Abs(hitPointCoord[0] - adjPointCoord[0]) < 2 &&
-                                                 Math.Abs(hitPointCoord[1] - adjPointCoord[1]) < 2 &&
-                                                 Math.Abs(hitPointCoord[2] - adjPointCoord[2]) < 2
-                                        ) //any other cases should be covers...
-                                        {
-                                            //Check floor //TODO: FLOOR DIFFERENCE IS WORKING WRONG!
-                                            int floorDifference =
-                                                hitPointCoord[2] - k; // -1 lower, 0 same, +1 higher
-                                            int[] probablyAdjTile = new int[]
-                                                {adjPointCoord[0], adjPointCoord[1], floorDifference};
-
-                                            RaycastHit highHitInfo;
-                                            bool hitHigh = false;
-
-                                            hitHigh = Physics.Raycast(pointForAdj, checkVectorsArrHighCover[l],
-                                                out highHitInfo, 1, mask);
-                                            if (hitHigh)
-                                            {
-                                                tiles[i, j, k].CoverArray[l] = 2;
-                                            }
-                                            else
-                                            {
-                                                if (adjPointCoord[2] + floorDifference > -1 &&
-                                                    adjPointCoord[2] + floorDifference < floorCount &&
-                                                    tiles[adjPointCoord[0], adjPointCoord[1],
-                                                        adjPointCoord[2] + floorDifference].traversable)
-                                                {
-                                                    if (floorDifference >= 0)
-                                                    {
-                                                        tiles[i, j, k].AdjacencyArray[5 + l - (5 * floorDifference)] =
-                                                            true;
-                                                    }
-                                                    else if (floorDifference == -1)
-                                                    {
-                                                        tiles[i, j, k].AdjacencyArray[l + 9] = true;
-                                                    }
-                                                }
-
-                                                tiles[i, j, k].CoverArray[l] = 1;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            // for (int i = 0; i < tiles.GetLength(0); i++)
+            // {
+            //     for (int j = 0; j < tiles.GetLength(1); j++)
+            //     {
+            //         for (int k = 0; k < tiles.GetLength(2); k++)
+            //         {
+            //             RaycastHit hitInfo = new RaycastHit();
+            //             bool hit = Physics.Raycast(GetOriginPointForTopDownVect(i, j, k), Vector3.down, out hitInfo, 3,
+            //                 mask);
+            //             if (hit)
+            //             {
+            //                 //Console.WriteLine(hitInfo.point);
+            //                 if (k == 1)
+            //                 {
+            //                     //Debug.DrawLine(GetOriginPointForTopDownVect(i, j, k), hitInfo.point, Color.green, 2);
+            //                 }
+            //
+            //                 //Debug.DrawLine(GetOriginPointForTopDownVect(i, j, k), hitInfo.point, Color.green, 2);
+            //                 //Debug.Log(hitInfo.point);
+            //                 GetTileIndexesByCoords(hitInfo.point);
+            //                 if ((hitInfo.transform.gameObject.tag.Equals("Floor")) &&
+            //                     GetTileIndexesByCoords(hitInfo.point).SequenceEqual(new int[] {i, j, k})
+            //                 )
+            //                 {
+            //                     tiles[i, j, k].traversable = true;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            //
+            // // This cycle checks adjacency and covers
+            // for (int i = 0; i < tiles.GetLength(0); i++)
+            // {
+            //     for (int j = 0; j < tiles.GetLength(1); j++)
+            //     {
+            //         for (int k = 0; k < tiles.GetLength(2); k++)
+            //         {
+            //             RaycastHit hitInfo = new RaycastHit();
+            //             bool hit = Physics.Raycast(GetOriginPointForTopDownVect(i, j, k), Vector3.down, out hitInfo, 3,
+            //                 mask);
+            //             if (hit)
+            //             {
+            //                 if (hitInfo.transform.gameObject.tag.Equals("Floor") &&
+            //                     GetTileIndexesByCoords(hitInfo.point).SequenceEqual(new int[] {i, j, k})
+            //                 )
+            //                 {
+            //                     Vector3 pointForAdj = hitInfo.point + upVect;
+            //
+            //                     // hit = Physics.Raycast(pointForAdj, new Vector3(0, -1.3f, 0.6f),out hitInfo);
+            //
+            //                     for (int l = 0; l < 4; l++)
+            //                     {
+            //                         // 
+            //                         RaycastHit adjHitInfo;
+            //                         bool adjHit = Physics.Raycast(pointForAdj, checkVectorsArrLowCover[l],
+            //                             out adjHitInfo, 3.65f, mask);
+            //                         if (adjHit)
+            //                         {
+            //                             int[] hitPointCoord =
+            //                                 GetTileIndexesByCoords(adjHitInfo.point); //Where raycast hit
+            //                             int[] adjPointCoord =
+            //                                 GetTileIndexesByAdjIndex(l + 5, i, j,
+            //                                     k); //Where raycast "supposed" to hit
+            //
+            //                             if (adjHitInfo.transform.gameObject.tag.Equals("Ladder") &&
+            //                                 hitPointCoord.SequenceEqual(new int[] {i, j, k})
+            //                             ) // If hit ladder withing tile
+            //                             {
+            //                                 tiles[i, j, k].AdjacencyArray[l] = true;
+            //                                 //tiles[i, j, k].AdjacencyArray[4] = true;
+            //                                 //TODO: check uses
+            //                                 int[] ladderTile = GetTileIndexesByAdjIndex(l, i, j, k);
+            //                                 if (!ladderTile.SequenceEqual(new int[] {-1, -1, -1}))
+            //                                 {
+            //                                     tiles[ladderTile[0], ladderTile[1], ladderTile[2]]
+            //                                         .AdjacencyArray[((l + 2) % 4) + 9] = true;
+            //                                 }
+            //                             }
+            //                             else if (adjHitInfo.transform.gameObject.tag.Equals("Floor") &&
+            //                                      hitPointCoord[0] == adjPointCoord[0] &&
+            //                                      hitPointCoord[1] == adjPointCoord[1] &&
+            //                                      Math.Abs(hitPointCoord[2] - adjPointCoord[2]) < 2
+            //                                 // Same floor or 1 floor higher/lower
+            //                             ) // Not sure whether I check all possible clauses...
+            //                             {
+            //                                 if (hitPointCoord[2] > adjPointCoord[2]) //1 floor higher
+            //                                 {
+            //                                     tiles[i, j, k].AdjacencyArray[l] = true;
+            //                                 }
+            //                                 else if (hitPointCoord[2] == adjPointCoord[2]) //same floor
+            //                                 {
+            //                                     tiles[i, j, k].AdjacencyArray[l + 5] = true;
+            //                                 }
+            //                                 else //floor lower
+            //                                 {
+            //                                     tiles[i, j, k].AdjacencyArray[l + 9] = true;
+            //                                 }
+            //                             }
+            //                             else if (Math.Abs(hitPointCoord[0] - adjPointCoord[0]) < 2 &&
+            //                                      Math.Abs(hitPointCoord[1] - adjPointCoord[1]) < 2 &&
+            //                                      Math.Abs(hitPointCoord[2] - adjPointCoord[2]) < 2
+            //                             ) //any other cases should be covers...
+            //                             {
+            //                                 //Check floor //TODO: FLOOR DIFFERENCE IS WORKING WRONG!
+            //                                 int floorDifference =
+            //                                     hitPointCoord[2] - k; // -1 lower, 0 same, +1 higher
+            //                                 int[] probablyAdjTile = new int[]
+            //                                     {adjPointCoord[0], adjPointCoord[1], floorDifference};
+            //
+            //                                 RaycastHit highHitInfo;
+            //                                 bool hitHigh = false;
+            //
+            //                                 hitHigh = Physics.Raycast(pointForAdj, checkVectorsArrHighCover[l],
+            //                                     out highHitInfo, 1, mask);
+            //                                 
+            //                                 if (hitHigh)
+            //                                 {
+            //                                     tiles[i, j, k].CoverArray[l] = 2;
+            //                                     //Debug.DrawLine(pointForAdj, pointForAdj + checkVectorsArrHighCover[l], Color.green, 25 );
+            //                                 }
+            //                                 else
+            //                                 {
+            //                                     if (adjPointCoord[2] + floorDifference > -1 &&
+            //                                         adjPointCoord[2] + floorDifference < floorCount &&
+            //                                         tiles[adjPointCoord[0], adjPointCoord[1],
+            //                                             adjPointCoord[2] + floorDifference].traversable)
+            //                                     {
+            //                                         if (floorDifference >= 0)
+            //                                         {
+            //                                             tiles[i, j, k].AdjacencyArray[5 + l - (5 * floorDifference)] =
+            //                                                 true;
+            //                                         }
+            //                                         else if (floorDifference == -1)
+            //                                         {
+            //                                             tiles[i, j, k].AdjacencyArray[l + 9] = true;
+            //                                         }
+            //                                     }
+            //
+            //                                     tiles[i, j, k].CoverArray[l] = 1;
+            //                                 }
+            //                             }
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
 
         /// <summary>
@@ -531,6 +546,16 @@ namespace Models
         {
             if (!tile.occupied)
             {
+                try
+                {
+                    // Better to do this another way
+                    occupier.GetComponent<CharacterDataComponent>().position = tile;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
                 tile.characterOnTile = occupier;
                 tile.occupied = true;
                 return true;

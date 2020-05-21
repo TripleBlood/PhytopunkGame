@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DefaultNamespace;
 using Models;
 using Unity.UNetWeaver;
@@ -10,6 +11,8 @@ using UnityEngine.Rendering;
 public class BattleManager : MonoBehaviour
 {
     public bool busy;
+
+    public Canvas mainUI;
 
     public List<BattleController> battleControllersQueue;
     public BattleController currentBattleController;
@@ -23,35 +26,25 @@ public class BattleManager : MonoBehaviour
     public int floors;
     public int width;
     public int length;
-    
+
     public float xOffset;
     public float zOffset;
     public float yOffset;
-    
+
     public Map map;
 
-    public Queue<EventBattle> eventQueue;
-    
+    public List<EventBattle> eventQueue = new List<EventBattle>();
+    private EventBattle currentEvent;
+
 
     private void Awake()
     {
         map = new Map(floors, width, length, xOffset, zOffset, yOffset);
 
+        // b
         // Это пиздец гениально, оно работает, но я ваще не ебу как...
-        Type type = typeof(MoveAndAttackTargetingController);
-        currentTargetController = (TargetingController)gameObject.AddComponent(type);
-        
-        // Don't declare it here!
-        //currentTargetController = gameObject.AddComponent(typeof(MoveAndAttackTargetingController)) as MoveAndAttackTargetingController;
-        // currentTargetController.battleManager = this;
-        // currentTargetController.map = map;
-        // currentTargetController.currentBattleController = currentBattleController;
-
-        // Better to instantiate within controller!
-        //Leave only map and map
-
-        //Destroy(currentTargetController);
-
+        // Type type = typeof(MoveAndAttackTargetingController);
+        // currentTargetController = (TargetingController)gameObject.AddComponent(type);
     }
 
 
@@ -67,7 +60,7 @@ public class BattleManager : MonoBehaviour
         // To each BattleController should be binned active instance of BattleManager
 
         Type type = typeof(InitiatePositions);
-        InitiatePositions initiateEvent = (InitiatePositions)gameObject.AddComponent(type);
+        InitiatePositions initiateEvent = (InitiatePositions) gameObject.AddComponent(type);
         initiateEvent.battleManager = this;
         initiateEvent.SetCharacters(characters);
         initiateEvent.map = map;
@@ -82,6 +75,7 @@ public class BattleManager : MonoBehaviour
         foreach (BattleController battleController in battleControllersQueue)
         {
             battleController.battleManager = this;
+            battleController.map = map;
 
             if (battleController.GetType() == typeof(CharacterBattleController))
             {
@@ -90,7 +84,7 @@ public class BattleManager : MonoBehaviour
         }
 
         initiateEvent.active = true;
-        
+
 
         StartTurn();
     }
@@ -114,8 +108,8 @@ public class BattleManager : MonoBehaviour
         currentBattleController.enabled = true;
 
         // This should be in BattleController?
-        currentTargetController.currentBattleController = currentBattleController;
-        currentTargetController.Construct(this, map, currentBattleController);
+        // currentTargetController.currentBattleController = currentBattleController;
+        // currentTargetController.Construct(this, map, currentBattleController);
 
         currentBattleController.BeginTurn();
     }
@@ -128,5 +122,26 @@ public class BattleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!busy)
+        {
+            if (eventQueue.Count > 0)
+            {
+                currentEvent = eventQueue.First();
+                if (eventQueue.Count == 1)
+                {
+                    eventQueue = new List<EventBattle>();
+                }
+                else
+                {
+                    eventQueue = eventQueue.GetRange(1, eventQueue.Count - 1);
+                }
+
+                if (currentEvent.initiated)
+                {
+                    currentEvent.active = true;
+                    busy = true;
+                }
+            }
+        }
     }
 }

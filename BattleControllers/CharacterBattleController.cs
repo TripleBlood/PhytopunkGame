@@ -8,7 +8,7 @@ namespace DefaultNamespace
     public class CharacterBattleController : BattleController
     {
         public CharacterDataComponent characterDataComponent;
-        
+
         private void Start()
         {
             // characterData = this.gameObject.GetComponent<CharacterControl>();
@@ -29,13 +29,14 @@ namespace DefaultNamespace
             if (Input.GetKeyUp(KeyCode.Tab))
             {
                 this.battleManager.EndTurnBM();
-                
             }
         }
 
         public override void EndTurnBC()
         {
             characterDataComponent.selectionRing.SetActive(false);
+            currentTargetingController.EndTargeting();
+            Destroy(currentTargetingController);
             // throw new NotImplementedException();
         }
 
@@ -48,20 +49,35 @@ namespace DefaultNamespace
             // this.Start();
             RecoverAPBeginTurn();
             characterDataComponent.selectionRing.SetActive(true);
+            currentTargetingController = (TargetingController) gameObject.AddComponent
+                (characterDataComponent.targetControllerTypes[0]);
+            currentTargetingController.Construct(battleManager, map, this);
             // gh
         }
 
         public void RecoverAPBeginTurn()
         {
             // Notify Observer!?
-            if (characterDataComponent.ap + (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier) < characterDataComponent.baseAP)
+            if (characterDataComponent.ap +
+                (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier) <
+                characterDataComponent.baseAP)
             {
-                characterDataComponent.ap += (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier);
+                characterDataComponent.ap +=
+                    (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier);
             }
             else
             {
                 characterDataComponent.ap = characterDataComponent.baseAP;
             }
+        }
+
+        public void SwapTargeting(int index)
+        {
+            currentTargetingController.EndTargeting();
+            Destroy(currentTargetingController);
+
+            currentTargetingController =
+                (TargetingController) gameObject.AddComponent(characterDataComponent.targetControllerTypes[index]);
         }
 
         IEnumerator WaitForSec(float sec)

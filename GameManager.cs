@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
                 
                 List<CharacterBattleController> characters = new List<CharacterBattleController>();
 
-                foreach (Collider characterCollider in characterColliders)
+                foreach (Collider characterCollider in characterColliders) 
                 {
                     //Expensive
                     characters.Add(characterCollider.gameObject.GetComponent<CharacterBattleController>());

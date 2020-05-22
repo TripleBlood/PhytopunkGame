@@ -14,8 +14,6 @@ namespace DefaultNamespace
     public class MoveAndAttackTargetingController : TargetingController
     {
         //Очень большой костыль!!!
-        public bool initiated = false;
-
         public bool state = true;
         public GameObject courser;
         public CharacterDataComponent caster;
@@ -60,7 +58,7 @@ namespace DefaultNamespace
 
             maxPathLength = _currentCharacterDataComponent.ap *
                             (_currentCharacterDataComponent.speed + _currentCharacterDataComponent.speedModifier);
-
+            
             initiated = true;
         }
 
@@ -199,76 +197,90 @@ namespace DefaultNamespace
                                 // Button button = Instantiate() as Button;
                                 // button.onClick.AddListener(ConfirmTarget);
                             }
+
                             Component bc;
-                            
+
                             if (hitLMBInfo.collider.TryGetComponent(typeof(BattleController), out bc))
                             {
-                                
                                 //Debug.Log("WOW! " + hitLMBInfo.collider.TryGetComponent(typeof(BattleController), out bc));
-                                
-                                
+
+
                                 targetForAttack =
                                     hitLMBInfo.collider.gameObject.GetComponent<CharacterBattleController>();
-
-                                Vector3 attackAlignment =
-                                    hitLMBInfo.collider.gameObject.transform.position - gameObject.transform.position;
-
-                                float angle = Vector3.SignedAngle(attackAlignment, Vector3.forward, Vector3.up);
-                                
-                                
-                                Debug.DrawLine(gameObject.transform.position, gameObject.transform.position + attackAlignment, Color.red, 3.5f);
-                                Debug.DrawLine(targetForAttack.gameObject.transform.position, targetForAttack.gameObject.transform.position + Vector3.forward, Color.blue, 3.5f);
-                                Debug.DrawLine(targetForAttack.gameObject.transform.position, targetForAttack.gameObject.transform.position + Vector3.right, Color.yellow, 3.5f);
-                                Debug.DrawLine(targetForAttack.gameObject.transform.position, targetForAttack.gameObject.transform.position + Vector3.back, Color.red, 3.5f);
-                                Debug.DrawLine(targetForAttack.gameObject.transform.position, targetForAttack.gameObject.transform.position + Vector3.left, Color.black, 3.5f);
-                                
-                                int adjIndex = GetAdjIndexByAngle(angle);
-                                int opponentAdjIndex = (adjIndex + 2) % 4;
-
-                                //Debug.Log("Angle = " + angle + " - " + adjIndex + ", " + opponentAdjIndex);
-                                
-                                List<Vector3> attackOrigin =
-                                    GetPointsOrigin(_currentCharacterDataComponent.position, adjIndex);
-                                List<Vector3> attackDestination =
-                                    GetPointsOrigin(targetForAttack.characterDataComponent.position, opponentAdjIndex);
-
-                                foreach (Vector3 origin in attackOrigin)
+                                if (currentCharControl.characterDataComponent.ap > 1)
                                 {
-                                    foreach (Vector3 destination in attackDestination)
+                                    Vector3 attackAlignment =
+                                        hitLMBInfo.collider.gameObject.transform.position -
+                                        gameObject.transform.position;
+
+                                    float angle = Vector3.SignedAngle(attackAlignment, Vector3.forward, Vector3.up);
+
+                                    Debug.DrawLine(gameObject.transform.position,
+                                        gameObject.transform.position + attackAlignment, Color.red, 3.5f);
+                                    Debug.DrawLine(targetForAttack.gameObject.transform.position,
+                                        targetForAttack.gameObject.transform.position + Vector3.forward, Color.blue,
+                                        3.5f);
+                                    Debug.DrawLine(targetForAttack.gameObject.transform.position,
+                                        targetForAttack.gameObject.transform.position + Vector3.right, Color.yellow,
+                                        3.5f);
+                                    Debug.DrawLine(targetForAttack.gameObject.transform.position,
+                                        targetForAttack.gameObject.transform.position + Vector3.back, Color.red, 3.5f);
+                                    Debug.DrawLine(targetForAttack.gameObject.transform.position,
+                                        targetForAttack.gameObject.transform.position + Vector3.left, Color.black,
+                                        3.5f);
+
+                                    int adjIndex = GetAdjIndexByAngle(angle);
+                                    int opponentAdjIndex = (adjIndex + 2) % 4;
+
+                                    //Debug.Log("Angle = " + angle + " - " + adjIndex + ", " + opponentAdjIndex);
+
+                                    List<Vector3> attackOrigin =
+                                        GetPointsOrigin(_currentCharacterDataComponent.position, adjIndex);
+                                    List<Vector3> attackDestination =
+                                        GetPointsOrigin(targetForAttack.characterDataComponent.position,
+                                            opponentAdjIndex);
+
+                                    foreach (Vector3 origin in attackOrigin)
                                     {
-                                        // int maskForAttack = ~(1 << 9);
-                                        RaycastHit hitAtckInfo = new RaycastHit();
-                                        bool hitAtck = Physics.Raycast(origin, destination - origin, out hitAtckInfo,
-                                            (destination - origin).magnitude);
-                                        
-                                        Debug.DrawLine(origin, destination, Color.white, 5);
-
-                                        if (!hitAtck || hitAtckInfo.collider.gameObject.GetComponent<CharacterBattleController>() == targetForAttack)
+                                        foreach (Vector3 destination in attackDestination)
                                         {
-                                            originForAttack = origin;
-                                            destinationForAttcak = destination;
+                                            // int maskForAttack = ~(1 << 9);
+                                            RaycastHit hitAtckInfo = new RaycastHit();
+                                            bool hitAtck = Physics.Raycast(origin, destination - origin,
+                                                out hitAtckInfo,
+                                                (destination - origin).magnitude);
 
-                                            curTile = targetForAttack.characterDataComponent.position;
-                                            
-                                            Vector3 pathPoint = map.GetCoordByTileIndexes(curTile.x, curTile.z, curTile.y);
-                                            Vector3 vect = pathPoint + new Vector3(0, 0.7f, 0);
-                                            Vector2 vect2 = Camera.main.WorldToScreenPoint(vect);
-                                            
-                                            confirmButtonGameObject =
-                                                Instantiate(Resources.Load("UIElements/AttackBtn")) as GameObject;
-                                            confirmButtonGameObject.transform.SetParent(mainUI.transform, false);
-                                            confirmButton = confirmButtonGameObject.GetComponent<Button>();
-                                            confirmButton.onClick.AddListener(ConfirmTarget);
-                                            confirmButtonGameObject.GetComponent<UIinSpace>()
-                                                .Initiate(vect, new Vector2(20, 45));
-                                            
-                                            attackConfirm = true;
-                                            
-                                            return;
-                                        }
-                                        else
-                                        {
-                                            //Debug.Log("Attack is unavailable!");
+                                            Debug.DrawLine(origin, destination, Color.white, 5);
+
+                                            if (!hitAtck || hitAtckInfo.collider.gameObject
+                                                    .GetComponent<CharacterBattleController>() == targetForAttack)
+                                            {
+                                                originForAttack = origin;
+                                                destinationForAttcak = destination;
+
+                                                curTile = targetForAttack.characterDataComponent.position;
+
+                                                Vector3 pathPoint =
+                                                    map.GetCoordByTileIndexes(curTile.x, curTile.z, curTile.y);
+                                                Vector3 vect = pathPoint + new Vector3(0, 0.7f, 0);
+                                                Vector2 vect2 = Camera.main.WorldToScreenPoint(vect);
+
+                                                confirmButtonGameObject =
+                                                    Instantiate(Resources.Load("UIElements/AttackBtn")) as GameObject;
+                                                confirmButtonGameObject.transform.SetParent(mainUI.transform, false);
+                                                confirmButton = confirmButtonGameObject.GetComponent<Button>();
+                                                confirmButton.onClick.AddListener(ConfirmTarget);
+                                                confirmButtonGameObject.GetComponent<UIinSpace>()
+                                                    .Initiate(vect, new Vector2(20, 45));
+
+                                                attackConfirm = true;
+
+                                                return;
+                                            }
+                                            else
+                                            {
+                                                //Debug.Log("Attack is unavailable!");
+                                            }
                                         }
                                     }
                                 }
@@ -303,22 +315,62 @@ namespace DefaultNamespace
             if (moveConfirm)
             {
                 Type type = typeof(MoveAbility);
-                MoveAbility moveAbility = (MoveAbility)battleManager.gameObject.AddComponent(type);
+                MoveAbility moveAbility = (MoveAbility) battleManager.gameObject.AddComponent(type);
 
                 try
                 {
                     moveAbility.SetProperties("Move", "MoveObject", APcostForMovement, 0, 0, 0, true);
                     moveAbility.path = path;
                     moveAbility.movingObject = this.gameObject;
+                    moveAbility.movingObjBattleController = currentCharControl;
                     moveAbility.battleManager = battleManager;
 
                     moveAbility.initiated = true;
-                    
+
                     battleManager.eventQueue.Add(moveAbility);
+
+                    currentCharControl.characterDataComponent.ap -= APcostForMovement;
+                    maxPathLength = _currentCharacterDataComponent.ap *
+                                    (_currentCharacterDataComponent.speed +
+                                     _currentCharacterDataComponent.speedModifier);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e); 
+                    Console.WriteLine(e);
+                    Debug.Log("Fuck, this doesn't work!");
+                }
+            }
+
+            if (attackConfirm)
+            {
+                Type type = typeof(AttackAbility);
+                AttackAbility attackAbility = (AttackAbility) battleManager.gameObject.AddComponent(type);
+
+                try
+                {
+                    attackAbility.SetProperties("Attack", "Attack", 2, 0, 0, 0, true);
+                    attackAbility.battleManager = battleManager;
+
+                    attackAbility.attacker = this.gameObject;
+                    attackAbility.target = targetForAttack.gameObject;
+
+                    attackAbility.attackerBC = currentCharControl;
+                    attackAbility.targetBC = targetForAttack;
+                    attackAbility.origin = originForAttack;
+                    attackAbility.destination = destinationForAttcak;
+
+                    attackAbility.initiated = true;
+
+                    battleManager.eventQueue.Add(attackAbility);
+
+                    currentCharControl.characterDataComponent.ap -= 2;
+                    maxPathLength = _currentCharacterDataComponent.ap *
+                                    (_currentCharacterDataComponent.speed +
+                                     _currentCharacterDataComponent.speedModifier);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
                     Debug.Log("Fuck, this doesn't work!");
                 }
             }
@@ -401,7 +453,6 @@ namespace DefaultNamespace
 
         List<Vector3> GetPointsOrigin(Tile tile, int index)
         {
-            
             List<Vector3> result = new List<Vector3>();
             if (index > 3 || index < 0)
             {
@@ -417,14 +468,14 @@ namespace DefaultNamespace
                 {
                     result[i] += map.GetCoordByTileIndexes(tile.x, tile.z, tile.y);
                 }
-                
+
                 return result;
             }
 
             if (cover == 2)
             {
                 result = pointsAdd[index].ToList().GetRange(1, 2);
-                
+
                 for (int i = 0; i < result.Count; i++)
                 {
                     result[i] += map.GetCoordByTileIndexes(tile.x, tile.z, tile.y);
@@ -432,6 +483,15 @@ namespace DefaultNamespace
 
                 return result;
             }
+
+            result = pointsAdd[index].ToList();
+
+            // for (int i = 0; i < result.Count; i++)
+            // {
+            //     result[i] += map.GetCoordByTileIndexes(tile.x, tile.z, tile.y);
+            // }
+            //
+            // return result.GetRange(0, 1);
 
             return new List<Vector3>
             {
@@ -448,6 +508,7 @@ namespace DefaultNamespace
             {
                 Destroy(VARIABLE);
             }
+
             Destroy(this);
         }
     }

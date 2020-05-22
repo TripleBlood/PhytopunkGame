@@ -152,7 +152,10 @@ namespace Models
                             // 
                             RaycastHit adjHitInfo;
                             bool adjHit = Physics.Raycast(pointForAdj, checkVectorsArrLowCover[l],
-                                out adjHitInfo, 3.65f, mask);
+                                out adjHitInfo, 2.15f, mask);
+
+                            // Debug.DrawLine(pointForAdj, (pointForAdj + checkVectorsArrLowCover[l]* 2.1f) ,
+                            //     Color.magenta, 25);
                             if (adjHit)
                             {
                                 int[] hitPointCoord =
@@ -287,6 +290,7 @@ namespace Models
                                                 mapCoverDict.Add(MapUtils.FormMapHash(buffer[0], buffer[2], buffer[1],
                                                     xbuffer, ybuffer, zbuffer), 1);
                                             }
+
                                             actualTile.CoverArray[l] = 1;
                                         }
 

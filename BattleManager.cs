@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
 using Models;
-using Unity.UNetWeaver;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -42,7 +41,7 @@ public class BattleManager : MonoBehaviour
         map = new Map(floors, width, length, xOffset, zOffset, yOffset);
 
         // b
-        // Это пиздец гениально, оно работает, но я ваще не ебу как...
+        // Это гениально, оно работает, но я ваще не ебу как...
         // Type type = typeof(MoveAndAttackTargetingController);
         // currentTargetController = (TargetingController)gameObject.AddComponent(type);
     }

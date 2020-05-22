@@ -16,9 +16,22 @@ namespace DefaultNamespace
 
         IEnumerator Move()
         {
+            MoveUP();
             for (int i = 0; i < 30; i++)
             {
                 gameObject.transform.position += Vector3.forward * 0.01f;
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(3);
+            Debug.Log("Finished");
+        }
+        
+        IEnumerator MoveUP()
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                gameObject.transform.position += Vector3.up * 0.01f;
                 yield return null;
             }
 

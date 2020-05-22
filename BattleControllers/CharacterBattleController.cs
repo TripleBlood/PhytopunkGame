@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Models;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -34,6 +35,11 @@ namespace DefaultNamespace
 
         public override void EndTurnBC()
         {
+            foreach (Effect effect in characterDataComponent.effects)
+            {
+                StartCoroutine(effect.EndTurnEffect(characterDataComponent.effects));
+            }
+
             characterDataComponent.selectionRing.SetActive(false);
             currentTargetingController.EndTargeting();
             Destroy(currentTargetingController);
@@ -48,6 +54,12 @@ namespace DefaultNamespace
         {
             // this.Start();
             RecoverAPBeginTurn();
+
+            foreach (Effect effect in characterDataComponent.effects)
+            {
+                StartCoroutine(effect.BeginTurnEffect(characterDataComponent.effects));
+            }
+
             characterDataComponent.selectionRing.SetActive(true);
             currentTargetingController = (TargetingController) gameObject.AddComponent
                 (characterDataComponent.targetControllerTypes[0]);
@@ -78,6 +90,7 @@ namespace DefaultNamespace
 
             currentTargetingController =
                 (TargetingController) gameObject.AddComponent(characterDataComponent.targetControllerTypes[index]);
+            currentTargetingController.Construct(battleManager, map, this);
         }
 
         IEnumerator WaitForSec(float sec)

@@ -11,7 +11,7 @@ namespace DefaultNamespace.Utils
                 case "MoveAndAttack":
                     return typeof(MoveAndAttackTargetingController);
                 case "Overload":
-                    break;
+                    return typeof(OverloadTargetingController);
             }
             return typeof(MoveAndAttackTargetingController);
         }

@@ -61,13 +61,27 @@ namespace DefaultNamespace
 
         public List<int> abilityCooldowns;
         
-        public List<Effect> effects;
+        public List<Effect> effects = new List<Effect>();
         
         private Character _character;
 
 
         public GameObject selectionRing;
         public GameObject observeRing;
+
+        public void DeleteEffect(Effect effect)
+        {
+            try
+            {
+                StartCoroutine(effect.WereOffEffect(this.effects));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Debug.Log("Error in effect were off");
+                
+            }
+        }
 
         private void Awake()
         {
@@ -79,8 +93,8 @@ namespace DefaultNamespace
             }
             // throw new NotImplementedException();
         }
-        
-        
+
+
         // void Start()
         // {
         //     // Initiate character variable should be from savefile, but for now it's created form default constructor

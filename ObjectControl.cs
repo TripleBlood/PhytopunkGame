@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace.Utils;
 using Models;
-using Unity.UNetWeaver;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -80,7 +78,7 @@ public class ObjectControl : MonoBehaviour
                 {
                     Vector3 point = hitInfo.point;
                     array = map.GetTileIndexesByCoords(point);
-                    Debug.Log(array[0] + ", " + array[1] + ", " + array[2] + ", ");
+                    // Debug.Log(array[0] + ", " + array[1] + ", " + array[2] + ", ");
                     
                     Tile tile = map.FindTile(array[0], array[1], array[2]);
                     
@@ -96,8 +94,8 @@ public class ObjectControl : MonoBehaviour
                                     " West: " + tile.CoverArray[3]
                         ;
                     //Debug.Log(str);
-                    Debug.Log(logger);
-                    Debug.Log("---------");
+                    // Debug.Log(logger);
+                    // Debug.Log("---------");
                     
                     string dictstrCheck = "Adj tiles: ";
 

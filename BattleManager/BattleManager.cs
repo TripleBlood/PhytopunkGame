@@ -6,6 +6,7 @@ using DefaultNamespace;
 using Models;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -34,11 +35,15 @@ public class BattleManager : MonoBehaviour
 
     public List<EventBattle> eventQueue = new List<EventBattle>();
     private EventBattle currentEvent;
+    
+    List<GameObject> abilityBtnList = new List<GameObject>();
 
 
     private void Awake()
     {
         map = new Map(floors, width, length, xOffset, zOffset, yOffset);
+
+        abilityBtnList = GetAbilityBtn();
 
         // b
         // Это гениально, оно работает, но я ваще не ебу как...
@@ -142,5 +147,36 @@ public class BattleManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public List<GameObject> GetAbilityBtn()
+    {
+        GameObject abilityPanel = mainUI.transform.Find("AbilityPanel").gameObject;
+        Debug.Log(abilityPanel.GetComponent<Image>().sprite.name);
+        
+        List<GameObject> btns = new List<GameObject>();
+
+        for (int i = 1; i < 11; i++)
+        {
+            
+            btns.Add(abilityPanel.transform.Find(i.ToString()).gameObject);
+        }
+
+        foreach (GameObject btn in btns)
+        {
+            Debug.Log(btn.GetComponent<Image>().sprite.name + " " + btn.name);
+        }
+        
+        return btns;
+
+    }
+
+    public bool TrySwapTargetingController(int index)
+    {
+        currentBattleController.SwapTargeting(index);
+        
+        
+            
+        return true;
     }
 }

@@ -97,7 +97,7 @@ namespace UnityEngine.Rendering
             //Debug.Log(map.FindTile(currentTile.x, currentTile.z, currentTile.y).occupied + " " + map.FindTile(currentTile.x, currentTile.z, currentTile.y).characterOnTile.name);
 
             Tile tile = characterBattleController.characterDataComponent.position; 
-            Debug.Log(characterBattleController.characterDataComponent.name + " is on tile: " + tile.x + ", "  + tile.z + ", " + tile.y);
+            Debug.Log(characterBattleController.characterDataComponent.nameData + " is on tile: " + tile.x + ", "  + tile.z + ", " + tile.y);
             
             //Debug.Log(battleManager.map == map);
 

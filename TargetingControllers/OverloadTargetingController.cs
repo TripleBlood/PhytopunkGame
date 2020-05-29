@@ -113,7 +113,8 @@ namespace DefaultNamespace
                         if (timeHoldingBtn <= 0.3f)
                         {
                             // SwapTargetingController
-                            EndTargeting();
+                            // EndTargeting();
+                            currentCharControl.SwapTargeting(0);
                         }
 
                         timeHoldingBtn = 0;
@@ -132,9 +133,13 @@ namespace DefaultNamespace
                 overloadAbility.SetProperties("Overload",
                     "Zapps target, dealing 20 damage and applying \"Shocked\" status for 2 turns", 2, 0, 2, 2, true);
                 overloadAbility.battleManager = battleManager;
+
+                overloadAbility.initiated = true;
+                
+                battleManager.eventQueue.Add(overloadAbility);
                 
                 // Some shit
-                
+
             }
             catch (Exception e)
             {
@@ -154,13 +159,18 @@ namespace DefaultNamespace
 
             currentCharControl = (CharacterBattleController) currentBattleController;
             _currentCharacterDataComponent = currentCharControl.characterDataComponent;
+
+            initiated = true;
         }
 
         public override void EndTargeting()
         {
+            initiated = false;
+            
             Destroy(courser);
             Deselect();
             
+            // currentCharControl.SwapTargeting(0);
             // SwapTargetingController!!!
 
             Destroy(this);
@@ -168,7 +178,21 @@ namespace DefaultNamespace
 
         public void Deselect()
         {
-            Destroy(confirmButtonGameObject);
+
+            if (targetSelected)
+            {
+                Destroy(confirmButtonGameObject);
+            } 
+            //
+            // try
+            // {
+            //     Destroy(confirmButtonGameObject);
+            // }
+            // catch (Exception e)
+            // {
+            //     Console.WriteLine(e);
+            // }
+            
 
             targetSelected = false;
         }

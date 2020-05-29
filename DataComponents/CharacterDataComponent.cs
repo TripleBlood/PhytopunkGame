@@ -6,19 +6,10 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
-    public class CharacterDataComponent : MonoBehaviour
+    public class CharacterDataComponent : DataComponent
     {
-        public string name;
-        public string description;
-        public enum Side
-        {
-            ALLIE, ENEMY, NEUTRAL_ENEMY, NEUTRAL_FRIEND 
-        }
-
         public Side side;
-
-        public int baseHP;
-        public int hp;
+        
         //Do I need baseHPMosifier?
 
         /// <summary>
@@ -44,10 +35,9 @@ namespace DefaultNamespace
         
         //All upgradeable stats here (Strength, Agility...) 
 
-        //Do I need this?
-        public Tile position;
+        
 
-        public bool dead;
+        
 
         /// <summary>
         /// String representation of abilities. Need to initiate battle! 

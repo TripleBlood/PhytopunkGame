@@ -81,33 +81,31 @@ public class ObjectControl : MonoBehaviour
                     // Debug.Log(array[0] + ", " + array[1] + ", " + array[2] + ", ");
                     
                     Tile tile = map.FindTile(array[0], array[1], array[2]);
-                    
-                    string str = "";
-                    foreach (var VARIABLE in map.tiles[array[0], array[1], array[2]].AdjacencyArray)
-                    {
-                        str += VARIABLE + ", ";
-                    }
 
-                    string logger = "North:" + tile.CoverArray[0] +
-                                    " East: " + tile.CoverArray[1] +
-                                    " South: " + tile.CoverArray[2] +
-                                    " West: " + tile.CoverArray[3]
-                        ;
-                    //Debug.Log(str);
-                    // Debug.Log(logger);
-                    // Debug.Log("---------");
+                    if (tile.x != -1)
+                    {
+                        string logger = "North:" + tile.CoverArray[0] +
+                                        " East: " + tile.CoverArray[1] +
+                                        " South: " + tile.CoverArray[2] +
+                                        " West: " + tile.CoverArray[3]
+                            ;
+                        //Debug.Log(str);
+                        // Debug.Log(logger);
+                        // Debug.Log("---------");
                     
-                    string dictstrCheck = "Adj tiles: ";
+                        string dictstrCheck = "Adj tiles: ";
 
                     
-                    if ( true/*map.mapTileDict.TryGetValue(MapUtils.GetTileHash(array[0], array[1], array[2]), out tile)*/)
-                    {
-                        List<Tile> list = MapUtils.GetAdjTilesWithOccCheck(map, tile.x, tile.z, tile.y);
-                        foreach (Tile tile1 in list)
+                        if ( true/*map.mapTileDict.TryGetValue(MapUtils.GetTileHash(array[0], array[1], array[2]), out tile)*/)
                         {
-                            dictstrCheck += tile1.x + ", " + tile1.z + ", " + tile1.y + "| ";
+                            List<Tile> list = MapUtils.GetAdjTilesWithOccCheck(map, tile.x, tile.z, tile.y);
+                            foreach (Tile tile1 in list)
+                            {
+                                dictstrCheck += tile1.x + ", " + tile1.z + ", " + tile1.y + "| ";
+                            }
                         }
                     }
+                    
 
                     //Debug.Log(dictstrCheck);
 

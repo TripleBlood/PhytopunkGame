@@ -47,4 +47,13 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    
+    public void AbilityBtnPressed(int index)
+    {
+        if (inBattle)
+        {
+            currentBattleManager.TrySwapTargetingController(index);
+        }
+        // return true;
+    }
 }

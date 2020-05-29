@@ -83,8 +83,16 @@ namespace DefaultNamespace
             }
         }
 
-        public void SwapTargeting(int index)
+        public override void SwapTargeting(int index)
         {
+            if (index >= characterDataComponent.targetControllerTypes.Count)
+            {
+                Debug.Log("Index is out of targeting controllers array");
+                return;
+            }
+            
+            // TODO: Swap and targeting calls eachother FIX!
+            
             currentTargetingController.EndTargeting();
             Destroy(currentTargetingController);
 

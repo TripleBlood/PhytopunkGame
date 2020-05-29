@@ -32,4 +32,6 @@ public abstract class BattleController  : MonoBehaviour
     /// Current Controller for ui, Targeting Systems. NEed to block Input access if not User's unit turn
     /// </summary>
     public TargetingController currentTargetingController;
+
+    public abstract void SwapTargeting(int index);
 }

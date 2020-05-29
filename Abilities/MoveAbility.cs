@@ -73,7 +73,7 @@ namespace DefaultNamespace
                 while ((movingObject.transform.position -  new Vector3(0, 0.7f, 0) - destinationPoint).magnitude >= 0.0005f)
                 {
                     movingObjBattleController.gameObject.transform.position =
-                        Vector3.MoveTowards(movingObjBattleController.gameObject.transform.position, destinationPoint,
+                        Vector3.MoveTowards(movingObjBattleController.gameObject.transform.position -  new Vector3(0, 0.7f, 0), destinationPoint,
                             step) + new Vector3(0, 0.7f, 0);
                     yield return null;
                 }

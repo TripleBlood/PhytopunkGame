@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Models;
+using UnityEngine;
 
 namespace DefaultNamespace
 {
     public class OverloadAbility : Ability
     {
+        
         public OverloadAbility()
         {
             //TODO: Replace from file read...
@@ -20,7 +23,29 @@ namespace DefaultNamespace
 
         public override void EndEvent(out bool busy)
         {
-            throw new System.NotImplementedException();
+            Destroy(this);
+            busy = false;
+        }
+
+        public void Update()
+        {
+            if (initiated && active)
+            {
+                StartCoroutine(OverloadMain());
+            }
+        }
+
+        private IEnumerator OverloadMain()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Debug.Log("Overload in " + (3-i));
+                yield return new WaitForSeconds(1);
+            }
+            
+            Debug.Log(description);
+            
+            EndEvent(out battleManager.busy);
         }
     }
 }

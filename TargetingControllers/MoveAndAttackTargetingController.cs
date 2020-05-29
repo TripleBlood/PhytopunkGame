@@ -161,6 +161,10 @@ namespace DefaultNamespace
                         {
                             if (hitLMBInfo.collider.gameObject.tag.Equals("Floor"))
                             {
+                                // !!!
+                                // TODO: Check if tile can be found in Dictionary, otherwise there will be error here!
+                                // !!!
+                                
                                 curPath = MapUtils.FindPath(map, _currentCharacterDataComponent.position,
                                     map.GetTileByVectorPoint(hitLMBInfo.point));
                                 if (curPath.Count > maxPathLength)

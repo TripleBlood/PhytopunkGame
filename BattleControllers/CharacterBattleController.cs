@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using DefaultNamespace.Utils;
 using Models;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.UI;
 
 namespace DefaultNamespace
 {
@@ -52,7 +55,6 @@ namespace DefaultNamespace
         /// <exception cref="NotImplementedException"></exception>
         public override void BeginTurn()
         {
-            // this.Start();
             RecoverAPBeginTurn();
 
             foreach (Effect effect in characterDataComponent.effects)
@@ -64,7 +66,8 @@ namespace DefaultNamespace
             currentTargetingController = (TargetingController) gameObject.AddComponent
                 (characterDataComponent.targetControllerTypes[0]);
             currentTargetingController.Construct(battleManager, map, this);
-            // gh
+
+            UpdateAbilityIconsUI(battleManager.AbilityBtnList);
         }
 
         public void RecoverAPBeginTurn()
@@ -90,9 +93,7 @@ namespace DefaultNamespace
                 Debug.Log("Index is out of targeting controllers array");
                 return;
             }
-            
-            // TODO: Swap and targeting calls eachother FIX!
-            
+
             currentTargetingController.EndTargeting();
             Destroy(currentTargetingController);
 
@@ -104,6 +105,28 @@ namespace DefaultNamespace
         IEnumerator WaitForSec(float sec)
         {
             yield return WaitForSec(sec);
+        }
+
+        public void UpdateAbilityIconsUI(List<GameObject> abilityBtnList)
+        {
+            for (int i = 0; i < abilityBtnList.Count; i++)
+            {
+                if (i + 1 < characterDataComponent.abilities.Count)
+                {
+                    abilityBtnList[i].GetComponent<Image>().sprite =
+                        Resources.Load(AbilityUtils.GetAbilityIcon(characterDataComponent.abilities[i + 1]),
+                            typeof(Sprite)) as Sprite;
+                }
+                else
+                {
+                    abilityBtnList[i].SetActive(false);
+                }
+            }
+        }
+
+        public void UpdateHPUI()
+        {
+            
         }
     }
 }

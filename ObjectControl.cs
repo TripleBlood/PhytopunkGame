@@ -5,6 +5,7 @@ using System.Linq;
 using DefaultNamespace.Utils;
 using Models;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 public class ObjectControl : MonoBehaviour
@@ -76,6 +77,8 @@ public class ObjectControl : MonoBehaviour
             {
                 if (hitInfo.transform.gameObject.tag.Equals("Floor"))
                 {
+                    if (EventSystem.current.IsPointerOverGameObject()) return;
+                    
                     Vector3 point = hitInfo.point;
                     array = map.GetTileIndexesByCoords(point);
                     // Debug.Log(array[0] + ", " + array[1] + ", " + array[2] + ", ");
@@ -125,7 +128,6 @@ public class ObjectControl : MonoBehaviour
 
         if (moving)
         {
-            // TODO: Movement should be by tiles!
             float step = speed * Time.deltaTime; // calculate distance to move
             transform.position = Vector3.MoveTowards(transform.position, destination, step);
             if (Vector3.Distance(transform.position, destination) < 0.001f)

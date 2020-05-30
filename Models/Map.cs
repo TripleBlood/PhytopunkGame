@@ -78,7 +78,7 @@ namespace Models
 
             this.testField = true;
 
-            //TODO: get rid of 3x arrays, adjacency arrays in Tile class
+            // get rid of 3x arrays, adjacency arrays in Tile class
             tiles = new Tile[width, length, floorCount];
             distanceList = new Tile[width, length, floorCount];
 
@@ -303,8 +303,6 @@ namespace Models
                 }
             }
 
-            // First cycle checks whether character can stand on each tile.
-            // TODO: can I split this to multiple threads?
             Debug.Log(tiles.GetLength(0) + ", " + tiles.GetLength(1) + ", " + tiles.GetLength(2));
 
             // for (int i = 0; i < tiles.GetLength(0); i++)

@@ -90,7 +90,10 @@ namespace DefaultNamespace
                 if (hit)
                 {
                     //check on traversability
-                    courser.transform.position = map.GetCourserPosition(hitInfo.point);
+                    if (map.GetTileByVectorPoint(hitInfo.point) != null && map.GetTileByVectorPoint(hitInfo.point).traversable)
+                    {
+                        courser.transform.position = map.GetCourserPosition(hitInfo.point);
+                    }
                 }
 
                 if (moveConfirm)

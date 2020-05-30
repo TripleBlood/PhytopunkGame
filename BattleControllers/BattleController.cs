@@ -34,4 +34,6 @@ public abstract class BattleController  : MonoBehaviour
     public TargetingController currentTargetingController;
 
     public abstract void SwapTargeting(int index);
+    
+    
 }

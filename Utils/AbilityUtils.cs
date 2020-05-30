@@ -15,5 +15,19 @@ namespace DefaultNamespace.Utils
             }
             return typeof(MoveAndAttackTargetingController);
         }
+
+        public static string GetAbilityIcon(string abilityName)
+        {
+            switch (abilityName)
+            {
+                case "MoveAndAttack":
+                    return "AbilityIcons/FlareAbIcon";
+                case "Overload":
+                    return "AbilityIcons/OverloadAbIcon";
+                case "Flare":
+                    return "AbilityIcons/FlareAbIcon";
+            }
+            return "AbilityIcons/FlareAbIcon";
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace Models
         public int z;
         public int y;
         
-        //TODO: get rid of 3x arrays, adjacency arrays in Tile class
-        public bool[] AdjacencyArray = new bool[14]; 
+        // Get rid of 3x arrays, adjacency arrays in Tile class
+        // public bool[] AdjacencyArray = new bool[14]; 
         // adjacencyMap
         // [TopNorth, TopEast, TopSouth, TopWest, Top,
         //  North,    East,    South,    West,
@@ -48,52 +48,45 @@ namespace Models
          */
 
         
-        public void Occupy(GameObject model, int xOffset, int zOffset, Vector3 mapMetrics)
-        {
-            if (occupied)
-            {
-                //TODO: Occupy adjacent tile
-                return;
-            }
-
-            try
-            {
-                
-            }
-            catch (MissingComponentException e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        public void Leave()
-        {
-            occupied = false;
-            characterOnTile = null;
-        }
-
-        /**
-         * Occupation evoked by movement
-         */
-        public void Occupy(GameObject model)
-        {
-            if (!occupied)
-            {
-                occupied = true;
-                characterOnTile = model;
-                
-                //TODO: Object movement (method additionally requires map metrics and offset parameters), 
-                //TODO: Requires move() method (with proper pathfinding algorithm)
-            }
-            else
-            {
-                Debug.Log("ТЫШО?! ТУПОЙ? НЕ ВИДИШЬ?! ЗАНЯТО!");
-            }
-        }
-
-        public void Swap(Tile tile)
-        {
-        }
+        // public void Occupy(GameObject model, int xOffset, int zOffset, Vector3 mapMetrics)
+        // {
+        //     if (occupied)
+        //     {
+        //         //TODO: Occupy adjacent tile
+        //         return;
+        //     }
+        //
+        //     try
+        //     {
+        //         
+        //     }
+        //     catch (MissingComponentException e)
+        //     {
+        //         Console.WriteLine(e);
+        //         throw;
+        //     }
+        // }
+        //
+        // public void Leave()
+        // {
+        //     occupied = false;
+        //     characterOnTile = null;
+        // }
+        //
+        // /**
+        //  * Occupation evoked by movement
+        //  */
+        // public void Occupy(GameObject model)
+        // {
+        //     if (!occupied)
+        //     {
+        //         occupied = true;
+        //         characterOnTile = model;
+        //     }
+        //     else
+        //     {
+        //         Debug.Log("ТЫШО?! ТУПОЙ? НЕ ВИДИШЬ?! ЗАНЯТО!");
+        //     }
+        // }
     }
 }

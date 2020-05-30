@@ -37,6 +37,10 @@ public class BattleManager : MonoBehaviour
     private EventBattle currentEvent;
     
     List<GameObject> abilityBtnList = new List<GameObject>();
+    public List<GameObject> AbilityBtnList => abilityBtnList;
+    
+    List<GameObject> apPanelsBlack = new List<GameObject>();
+    List<GameObject> apPanelsActive = new List<GameObject>();
 
 
     private void Awake()
@@ -44,6 +48,8 @@ public class BattleManager : MonoBehaviour
         map = new Map(floors, width, length, xOffset, zOffset, yOffset);
 
         abilityBtnList = GetAbilityBtn();
+        apPanelsBlack = GetAPPointsBlack();
+        apPanelsActive = GetAPPointsActive(apPanelsBlack);
 
         // b
         // Это гениально, оно работает, но я ваще не ебу как...
@@ -151,15 +157,22 @@ public class BattleManager : MonoBehaviour
 
     public List<GameObject> GetAbilityBtn()
     {
-        GameObject abilityPanel = mainUI.transform.Find("AbilityPanel").gameObject;
+        GameObject bottomUICanvas = mainUI.transform.Find("BottomUI").gameObject;
+        GameObject abilityPanel = bottomUICanvas.transform.Find("AbilityPanel").gameObject;
         Debug.Log(abilityPanel.GetComponent<Image>().sprite.name);
         
         List<GameObject> btns = new List<GameObject>();
 
-        for (int i = 1; i < 11; i++)
+        for (int i = 1; i < 12; i++)
         {
-            
-            btns.Add(abilityPanel.transform.Find(i.ToString()).gameObject);
+            try
+            {
+                btns.Add(abilityPanel.transform.Find(i.ToString()).gameObject);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         foreach (GameObject btn in btns)
@@ -168,7 +181,52 @@ public class BattleManager : MonoBehaviour
         }
         
         return btns;
+    }
 
+    public List<GameObject> GetAPPointsBlack()
+    {
+        GameObject bottomUICanvas = mainUI.transform.Find("BottomUI").gameObject;
+        GameObject apPanel = bottomUICanvas.transform.Find("APPanel").gameObject;
+        
+        List<GameObject> panels = new List<GameObject>();
+
+        for (int i = 1; i < 9; i++)
+        {
+            try
+            {
+                panels.Add(apPanel.transform.Find(i.ToString()).gameObject);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        
+        // panels[3].SetActive(false);
+        
+        return panels;
+    }
+    
+    public List<GameObject> GetAPPointsActive(List<GameObject> blackPanels)
+    {
+        List<GameObject> panels = new List<GameObject>();
+        foreach (GameObject blackPanel in blackPanels)
+        {
+            try
+            {
+                panels.Add(blackPanel.transform.Find("Panel").gameObject);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        // GameObject test = panels[6];
+        // test.GetComponent<Image>().color = Color.cyan;
+
+        return panels;
     }
 
     public bool TrySwapTargetingController(int index)

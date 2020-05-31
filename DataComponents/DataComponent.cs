@@ -10,6 +10,9 @@ namespace DefaultNamespace
         
         public int baseHP;
         public int hp;
+
+        public abstract void DeltaHP(int delta);
+        // TODO: Need Death and Resurrect methods! 
         
         public bool dead;
         

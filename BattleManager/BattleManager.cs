@@ -35,13 +35,21 @@ public class BattleManager : MonoBehaviour
 
     public List<EventBattle> eventQueue = new List<EventBattle>();
     private EventBattle currentEvent;
-    
+
+
     List<GameObject> abilityBtnList = new List<GameObject>();
-    public List<GameObject> AbilityBtnList => abilityBtnList;
-    
     List<GameObject> apPanelsBlack = new List<GameObject>();
     List<GameObject> apPanelsActive = new List<GameObject>();
+    List<GameObject> epPanelsBlack = new List<GameObject>();
+    List<GameObject> epPanelsActive = new List<GameObject>();
+    GameObject hp = new GameObject();
 
+    public List<GameObject> AbilityBtnList => abilityBtnList;
+    public List<GameObject> ApPanelsBlack => apPanelsBlack;
+    public List<GameObject> ApPanelsActive => apPanelsActive;
+    public List<GameObject> EpPanelsBlack => epPanelsBlack;
+    public List<GameObject> EpPanelsActive => epPanelsActive;
+    public GameObject Hp => hp;
 
     private void Awake()
     {
@@ -50,6 +58,9 @@ public class BattleManager : MonoBehaviour
         abilityBtnList = GetAbilityBtn();
         apPanelsBlack = GetAPPointsBlack();
         apPanelsActive = GetAPPointsActive(apPanelsBlack);
+        epPanelsBlack = GetEPPointsBlack();
+        epPanelsActive = GetEPPointsActive(epPanelsBlack);
+        hp = GetHPBar();
 
         // b
         // Это гениально, оно работает, но я ваще не ебу как...
@@ -190,7 +201,7 @@ public class BattleManager : MonoBehaviour
         
         List<GameObject> panels = new List<GameObject>();
 
-        for (int i = 1; i < 9; i++)
+        for (int i = 1; i < 11; i++)
         {
             try
             {
@@ -228,13 +239,63 @@ public class BattleManager : MonoBehaviour
 
         return panels;
     }
+    
+    public List<GameObject> GetEPPointsBlack()
+    {
+        GameObject bottomUICanvas = mainUI.transform.Find("BottomUI").gameObject;
+        GameObject epPanel = bottomUICanvas.transform.Find("EPPanel").gameObject;
+        
+        List<GameObject> panels = new List<GameObject>();
 
+        for (int i = 1; i < 6; i++)
+        {
+            try
+            {
+                panels.Add(epPanel.transform.Find(i.ToString()).gameObject);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        
+        // panels[3].SetActive(false);
+        
+        return panels;
+    }
+    
+    public List<GameObject> GetEPPointsActive(List<GameObject> blackPanels)
+    {
+        List<GameObject> panels = new List<GameObject>();
+        foreach (GameObject blackPanel in blackPanels)
+        {
+            try
+            {
+                panels.Add(blackPanel.transform.Find("Panel").gameObject);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        // GameObject test = panels[6];
+        // test.GetComponent<Image>().color = Color.cyan;
+
+        return panels;
+    }
+
+    public GameObject GetHPBar()
+    {
+        GameObject bottomUICanvas = mainUI.transform.Find("BottomUI").gameObject;
+        GameObject hpPanel = bottomUICanvas.transform.Find("HPPanel").gameObject;
+        return hpPanel.transform.Find("HP").gameObject;
+    }
+    
     public bool TrySwapTargetingController(int index)
     {
         currentBattleController.SwapTargeting(index);
-        
-        
-            
         return true;
     }
 }

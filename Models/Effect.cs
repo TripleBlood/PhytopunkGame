@@ -10,6 +10,8 @@ namespace Models
         public string description;
         public int baseDuration;
         public int duration;
+        public bool expired;
+        
         public CharacterBattleController characterBattleController;
         
         public abstract IEnumerator ApplyEffect(List<Effect> effects);

@@ -137,6 +137,9 @@ namespace DefaultNamespace
                                         .Initiate(vect, new Vector2(20, 45));
 
                                     path.AddRange(curPath);
+                                    
+                                    APcostForMovement = (int) Math.Ceiling((double) path.Count / (double) _currentCharacterDataComponent.speed);
+                                    currentCharControl.DeltaAPRed(APcostForMovement);
                                 }
                             }
                         }
@@ -198,6 +201,9 @@ namespace DefaultNamespace
                                     .Initiate(vect, new Vector2(20, 45));
 
                                 path.AddRange(curPath);
+                                
+                                APcostForMovement = (int) Math.Ceiling((double) path.Count / (double) _currentCharacterDataComponent.speed);
+                                currentCharControl.DeltaAPRed(APcostForMovement);
 
                                 moveConfirm = true;
 
@@ -280,6 +286,8 @@ namespace DefaultNamespace
                                                 confirmButtonGameObject.GetComponent<UIinSpace>()
                                                     .Initiate(vect, new Vector2(20, 45));
 
+                                                currentCharControl.DeltaAPRed(2);
+                                                
                                                 attackConfirm = true;
 
                                                 return;
@@ -336,7 +344,7 @@ namespace DefaultNamespace
 
                     battleManager.eventQueue.Add(moveAbility);
 
-                    currentCharControl.characterDataComponent.ap -= APcostForMovement;
+                    currentCharControl.DeltaAP(-APcostForMovement);
                     maxPathLength = _currentCharacterDataComponent.ap *
                                     (_currentCharacterDataComponent.speed +
                                      _currentCharacterDataComponent.speedModifier);
@@ -370,7 +378,7 @@ namespace DefaultNamespace
 
                     battleManager.eventQueue.Add(attackAbility);
 
-                    currentCharControl.characterDataComponent.ap -= 2;
+                    currentCharControl.DeltaAP(-2);
                     maxPathLength = _currentCharacterDataComponent.ap *
                                     (_currentCharacterDataComponent.speed +
                                      _currentCharacterDataComponent.speedModifier);
@@ -408,6 +416,8 @@ namespace DefaultNamespace
 
             moveConfirm = false;
             attackConfirm = false;
+            
+            currentCharControl.AvertCurrentApRedUI();
         }
 
         public int GetAdjIndexByAngle(float angle)

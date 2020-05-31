@@ -15,7 +15,9 @@ namespace DefaultNamespace.Utils
             }
             return typeof(MoveAndAttackTargetingController);
         }
+        
 
+        // Following methods better to pair with file readings to make balancing easier?
         public static string GetAbilityIcon(string abilityName)
         {
             switch (abilityName)
@@ -28,6 +30,29 @@ namespace DefaultNamespace.Utils
                     return "AbilityIcons/FlareAbIcon";
             }
             return "AbilityIcons/FlareAbIcon";
+        }
+
+        public static int[] GetAbilityCost(string abilityName)
+        {
+            int[] result = new int[2];
+            
+            switch (abilityName)
+            {
+                case "MoveAndAttack":
+                    result[0] = -1;
+                    result[1] = -1;
+                    break;
+                case "Overload":
+                    result[0] = 2;
+                    result[1] = 1;
+                    break;
+                case "Flare":
+                    result[0] = 2;
+                    result[1] = 1;
+                    break;
+            }
+
+            return result;
         }
     }
 }

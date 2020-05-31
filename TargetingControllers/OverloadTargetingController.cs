@@ -131,8 +131,12 @@ namespace DefaultNamespace
             try
             {
                 overloadAbility.SetProperties("Overload",
-                    "Zapps target, dealing 20 damage and applying \"Shocked\" status for 2 turns", 2, 0, 2, 2, true);
+                    "Zapps target, dealing 20 damage and applying \"Shocked\" status for 2 turns", 2, 1, 2, 2, true);
                 overloadAbility.battleManager = battleManager;
+                overloadAbility.target = targetForAttack;
+                
+                currentCharControl.DeltaAP(-2);
+                currentCharControl.DeltaEP(-1);
 
                 overloadAbility.initiated = true;
                 
@@ -147,7 +151,8 @@ namespace DefaultNamespace
                 throw;
             }
 
-            Deselect();
+            // Deselect();
+            currentCharControl.SwapTargeting(0);
         }
 
         public override void Construct(BattleManager battleManager, Map map, BattleController currentBattleController)
@@ -159,12 +164,19 @@ namespace DefaultNamespace
 
             currentCharControl = (CharacterBattleController) currentBattleController;
             _currentCharacterDataComponent = currentCharControl.characterDataComponent;
+            
+            currentCharControl.DeltaAPRed(2);
+            currentCharControl.DeltaEPRed(1);
 
             initiated = true;
         }
 
         public override void EndTargeting()
         {
+            
+            currentCharControl.AvertCurrentApRedUI();
+            currentCharControl.AvertCurrentEpRedUI();
+            
             initiated = false;
             
             Destroy(courser);
@@ -178,7 +190,7 @@ namespace DefaultNamespace
 
         public void Deselect()
         {
-
+            
             if (targetSelected)
             {
                 Destroy(confirmButtonGameObject);

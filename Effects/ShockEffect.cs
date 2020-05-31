@@ -19,6 +19,7 @@ namespace DefaultNamespace
         
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
+            // Here I can check other effects in list...
             effects.Add(this);
             characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
             Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
@@ -29,6 +30,7 @@ namespace DefaultNamespace
         {
             try
             {
+                characterBattleController.characterDataComponent.apRecoveryModifier += 1;
                 effects.Remove(this);
             }
             catch (Exception e)
@@ -49,9 +51,9 @@ namespace DefaultNamespace
 
         public override IEnumerator EndTurnEffect(List<Effect> effects)
         {
-            if (duration == 0)
+            if (duration < 1)
             {
-                characterBattleController.characterDataComponent.DeleteEffect(this);
+                expired = true;
             }
             yield return null;
         }

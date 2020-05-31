@@ -8,6 +8,7 @@ namespace DefaultNamespace
 {
     public class OverloadAbility : Ability
     {
+        public CharacterBattleController target;
         
         public OverloadAbility()
         {
@@ -42,7 +43,9 @@ namespace DefaultNamespace
                 Debug.Log("Overload in " + (3-i));
                 yield return new WaitForSeconds(1);
             }
-            
+
+            StartCoroutine(new ShockEffect(target).ApplyEffect(target.characterDataComponent.effects));
+
             Debug.Log(description);
             
             EndEvent(out battleManager.busy);

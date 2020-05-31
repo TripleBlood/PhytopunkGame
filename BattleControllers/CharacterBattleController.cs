@@ -56,7 +56,9 @@ namespace DefaultNamespace
 
             foreach (Effect expiredEffect in expiredEffects)
             {
+                Destroy(expiredEffect.uiEffectController.gameObject);
                 StartCoroutine(expiredEffect.WereOffEffect(characterDataComponent.effects));
+                
             }
 
             characterDataComponent.selectionRing.SetActive(false);
@@ -95,22 +97,27 @@ namespace DefaultNamespace
             // SetCurrentEpRedUI(1);
 
             UpdateHPUI();
+            UpdateEffects();
         }
+        
+        // ———————————————— Variables delta Block ———————————————— //
 
         public void RecoverAPBeginTurn()
         {
             // Notify Observer!?
-            if (characterDataComponent.ap +
-                (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier) <
-                characterDataComponent.baseAP)
-            {
-                characterDataComponent.ap +=
-                    (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier);
-            }
-            else
-            {
-                characterDataComponent.ap = characterDataComponent.baseAP;
-            }
+            // if (characterDataComponent.ap +
+            //     (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier) <
+            //     characterDataComponent.baseAP)
+            // {
+            //     characterDataComponent.ap +=
+            //         (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier);
+            // }
+            // else
+            // {
+            //     characterDataComponent.ap = characterDataComponent.baseAP;
+            // }
+            
+            DeltaAP(characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier);
         }
         
         public void DeltaAPRed(int apCost)
@@ -154,6 +161,8 @@ namespace DefaultNamespace
                 AvertCurrentEpRedUI();
             }
         }
+        
+        // ———————————————— Swapping targeting Controller Block ———————————————— //
 
         public override void SwapTargeting(int index)
         {
@@ -185,6 +194,12 @@ namespace DefaultNamespace
             yield return WaitForSec(sec);
         }
 
+        // ———————————————— UI Block ———————————————— //
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="abilityBtnList"></param>
         public void UpdateAbilityIconsUI(List<GameObject> abilityBtnList)
         {
             for (int i = 0; i < abilityBtnList.Count; i++)
@@ -312,6 +327,56 @@ namespace DefaultNamespace
             for (int i = 0; i < 5; i++)
             {
                 battleManager.EpPanelsActive[i].GetComponent<Image>().color = new Color(1, 0.7876751f, 0, 1);
+            }
+        }
+
+        public void UpdateEffects()
+        {
+            for (int i = 0; i < battleManager.EffectPanel.transform.childCount; i++)
+            {
+                Destroy(battleManager.EffectPanel.transform.GetChild(i).gameObject);
+            }
+            
+            foreach (Effect effect in characterDataComponent.effects)
+            {
+                GameObject effectIcon = (Instantiate(Resources.Load("EffectIcons/EffectIcon")) as GameObject);
+                effectIcon.transform.SetParent(battleManager.EffectPanel.transform, false);
+                effect.uiEffectController = effectIcon.GetComponent<UIEffectController>();
+                effect.uiEffectController.UpdatCounter(effect.duration.ToString());
+                effect.uiEffectController.UpdateIcon(effect.iconResourceURL);
+            }
+        }
+
+        public void AddEffect(Effect effect, List<Effect> effects)
+        {
+            if (effects == characterDataComponent.effects)
+            {
+                if (this == battleManager.currentBattleController)
+                {
+                    GameObject effectIcon = (Instantiate(Resources.Load("EffectIcons/EffectIcon")) as GameObject);
+                    effectIcon.transform.SetParent(battleManager.EffectPanel.transform, false);
+                    effect.uiEffectController = effectIcon.GetComponent<UIEffectController>();
+                    effect.uiEffectController.UpdatCounter(effect.duration.ToString());
+                    effect.uiEffectController.UpdateIcon(effect.iconResourceURL);
+                }
+            }
+            
+        }
+        
+        public void DestroyEffect(Effect effect, List<Effect> effects)
+        {
+            if (effects == characterDataComponent.effects)
+            {
+                try
+                {
+                    Destroy(effect.uiEffectController.gameObject);
+                    StartCoroutine(effect.WereOffEffect(effects));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
             }
         }
     }

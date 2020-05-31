@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace;
+using UnityEngine;
 
 namespace Models
 {
@@ -11,6 +12,12 @@ namespace Models
         public int baseDuration;
         public int duration;
         public bool expired;
+        public string iconResourceURL;
+        
+        public bool positive;
+        public bool despelable;
+
+        public UIEffectController uiEffectController;
         
         public CharacterBattleController characterBattleController;
         

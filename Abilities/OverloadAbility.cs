@@ -38,13 +38,26 @@ namespace DefaultNamespace
 
         private IEnumerator OverloadMain()
         {
+            active = false;
+            
             for (int i = 0; i < 3; i++)
             {
                 Debug.Log("Overload in " + (3-i));
                 yield return new WaitForSeconds(1);
             }
 
-            StartCoroutine(new ShockEffect(target).ApplyEffect(target.characterDataComponent.effects));
+            ShockEffect shockEffect = new ShockEffect(target);
+            
+            StartCoroutine(shockEffect.ApplyEffect(target.characterDataComponent.effects));
+            
+            // if (target == battleManager.currentBattleController)
+            // {
+            //     GameObject effectIcon = (Instantiate(Resources.Load("EffectIcons/EffectIcon")) as GameObject);
+            //     effectIcon.transform.SetParent(battleManager.EffectPanel.transform, false);
+            //     shockEffect.uiEffectController = effectIcon.GetComponent<UIEffectController>();
+            //     shockEffect.uiEffectController.UpdatCounter(shockEffect.duration.ToString());
+            //     shockEffect.uiEffectController.UpdateIcon(shockEffect.iconResourceURL);
+            // }
 
             Debug.Log(description);
             

@@ -15,15 +15,37 @@ namespace DefaultNamespace
             this.description = "-1 EP recovery per turn";
             this.baseDuration = 2;
             this.duration = 2;
+            this.iconResourceURL = "AbilityIcons/OverloadAbIcon";
+
+            this.despelable = true;
+            this.positive = false;
         }
         
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
             // Here I can check other effects in list...
-            effects.Add(this);
-            characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
-            Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
-            yield return null;
+            bool noInteruption = true;
+            
+            foreach (Effect effect in effects)
+            {
+                if (effect.name.Equals("Shocked"))
+                {
+                    noInteruption = false;
+                    // Method that destroy effect...
+                    characterBattleController.DestroyEffect(effect, effects);
+                    break;
+                }
+            }
+
+            if (noInteruption)
+            {
+                effects.Add(this);
+                characterBattleController.AddEffect(this, effects);
+                
+                characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
+                Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
+                yield return null;
+            }
         }
 
         public override IEnumerator WereOffEffect(List<Effect> effects)
@@ -45,6 +67,14 @@ namespace DefaultNamespace
         public override IEnumerator BeginTurnEffect(List<Effect> effects)
         {
             duration -= 1;
+            try
+            {
+                uiEffectController.UpdatCounter(duration.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
             yield return null;
         }

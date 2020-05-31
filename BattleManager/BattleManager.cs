@@ -42,7 +42,8 @@ public class BattleManager : MonoBehaviour
     List<GameObject> apPanelsActive = new List<GameObject>();
     List<GameObject> epPanelsBlack = new List<GameObject>();
     List<GameObject> epPanelsActive = new List<GameObject>();
-    GameObject hp = new GameObject();
+    GameObject hp;
+    private GameObject effectPanel;
 
     public List<GameObject> AbilityBtnList => abilityBtnList;
     public List<GameObject> ApPanelsBlack => apPanelsBlack;
@@ -50,6 +51,7 @@ public class BattleManager : MonoBehaviour
     public List<GameObject> EpPanelsBlack => epPanelsBlack;
     public List<GameObject> EpPanelsActive => epPanelsActive;
     public GameObject Hp => hp;
+    public GameObject EffectPanel => effectPanel;
 
     private void Awake()
     {
@@ -61,6 +63,7 @@ public class BattleManager : MonoBehaviour
         epPanelsBlack = GetEPPointsBlack();
         epPanelsActive = GetEPPointsActive(epPanelsBlack);
         hp = GetHPBar();
+        effectPanel = GetEffectPanel();
 
         // b
         // Это гениально, оно работает, но я ваще не ебу как...
@@ -186,10 +189,10 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        foreach (GameObject btn in btns)
-        {
-            Debug.Log(btn.GetComponent<Image>().sprite.name + " " + btn.name);
-        }
+        // foreach (GameObject btn in btns)
+        // {
+        //     Debug.Log(btn.GetComponent<Image>().sprite.name + " " + btn.name);
+        // }
         
         return btns;
     }
@@ -297,5 +300,11 @@ public class BattleManager : MonoBehaviour
     {
         currentBattleController.SwapTargeting(index);
         return true;
+    }
+
+    public GameObject GetEffectPanel()
+    {
+        GameObject bottomUICanvas = mainUI.transform.Find("BottomUI").gameObject;
+        return bottomUICanvas.transform.Find("Effects").gameObject;
     }
 }

@@ -130,7 +130,6 @@ namespace DefaultNamespace
                 targetControllerTypes.Add(AbilityUtils.GetTargetingControllerType(ability));
                 abilityCooldowns.Add(0);
             }
-
             // throw new NotImplementedException();
         }
 

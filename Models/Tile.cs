@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace Models
 {
@@ -25,6 +27,7 @@ namespace Models
         public GameObject characterOnTile;
 
         public bool IsIlluminated; 
+        
         public Tile()
         {
             occupied = false;
@@ -42,6 +45,8 @@ namespace Models
             IsIlluminated = true;
             traversable = false;
         }
+
+        
 
         /** ————————————————————————————————————————————————————————————————
          * Occupation status methods

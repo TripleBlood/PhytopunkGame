@@ -516,6 +516,33 @@ namespace Models
         }
 
         /// <summary>
+        /// Get coordinates in space of tile by Tile
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <returns> Coordinates in space as Vector3 </returns>
+        public Vector3 GetCoordByTile(Tile tile)
+        {
+            int x = tile.x;
+            int y = tile.y;
+            int z = tile.z;
+
+            int mask = 1 << 9;
+            mask = ~mask;
+
+            RaycastHit hitInfo = new RaycastHit();
+            bool hit = Physics.Raycast(GetOriginPointForTopDownVect(x, z, y), Vector3.down,
+                out hitInfo, 3, mask);
+
+            if (hit && hitInfo.transform.gameObject.tag.Equals("Floor"))
+            {
+                Vector3 vect = hitInfo.point;
+                return vect;
+            }
+
+            return new Vector3(xOffset + x, y * 3, zOffset + z);
+        }
+
+        /// <summary>
         /// Get coordinates in space for tile where inputVector is located 
         /// </summary>
         /// <param name="inputVector"></param>
@@ -682,6 +709,90 @@ namespace Models
             }
 
             return result;
+        }
+
+        public List<Vector3> GetPointsForIlluminationCheck(Tile tile)
+        {
+            List<Vector3> result = new List<Vector3>();
+
+            result.Add(GetCoordByTile(tile) + new Vector3(0, 0.2f, 0));
+            result.Add(GetCoordByTile(tile) + new Vector3(0, 1.7f, 0));
+
+            return result;
+        }
+
+        public void UpdateIllumination(List<GameObject> lightSources)
+        {
+            bool test = true;
+            foreach (KeyValuePair<string, Tile> keyValuePair in mapTileDict)
+            {
+                Tile tile = keyValuePair.Value;
+
+                int illuminationBuffer = 0;
+                int sourcesRequired = 2;
+
+                foreach (Vector3 pointForCheck in GetPointsForIlluminationCheck(tile))
+                {
+                    foreach (GameObject lightSource in lightSources)
+                    {
+                        Light lightComponent = lightSource.GetComponent<Light>();
+
+                        Vector3 tileToLightSource = lightSource.transform.position - pointForCheck;
+
+                        if (lightComponent.type == LightType.Directional)
+                        {
+                            RaycastHit hitInfoLight = new RaycastHit();
+                            bool hitLight = Physics.Raycast(pointForCheck, -lightSource.transform.forward,
+                                out hitInfoLight, Single.PositiveInfinity);
+
+                            if (!hitLight)
+                            {
+                                illuminationBuffer += 1;
+                            }
+                        }
+                        else if (lightComponent.type == LightType.Spot)
+                        {
+                            if (tileToLightSource.magnitude <= lightComponent.range)
+                            {
+                                if (Math.Abs(Vector3.SignedAngle(lightSource.transform.forward, -tileToLightSource,
+                                        Vector3.up)) <= lightComponent.spotAngle / 2 &&
+                                    Math.Abs(Vector3.SignedAngle(lightSource.transform.forward, -tileToLightSource,
+                                        Vector3.forward)) <= lightComponent.spotAngle / 2 &&
+                                    Math.Abs(Vector3.SignedAngle(lightSource.transform.forward, -tileToLightSource,
+                                        Vector3.right)) <= lightComponent.spotAngle / 2)
+                                {
+                                    RaycastHit hitInfoLight = new RaycastHit();
+                                    bool hitLight = Physics.Raycast(pointForCheck, tileToLightSource,
+                                        out hitInfoLight, tileToLightSource.magnitude);
+                                    if (!hitLight)
+                                    {
+                                        illuminationBuffer += 1;
+
+                                        Debug.DrawLine(pointForCheck, pointForCheck + Vector3.up, Color.white, 5);
+                                        Debug.DrawLine(pointForCheck, pointForCheck + tileToLightSource,
+                                            Color.green, 5);
+                                    }
+                                }
+                            }
+                        }
+                        else if (lightComponent.type == LightType.Rectangle)
+                        {
+                        }
+                        else if (lightComponent.type == LightType.Point)
+                        {
+                        }
+                    }
+
+                    if (illuminationBuffer >= sourcesRequired)
+                    {
+                        tile.IsIlluminated = true;
+                    }
+                    else
+                    {
+                        tile.IsIlluminated = false;
+                    }
+                }
+            }
         }
     }
 }

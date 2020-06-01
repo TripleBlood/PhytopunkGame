@@ -777,9 +777,116 @@ namespace Models
                         }
                         else if (lightComponent.type == LightType.Rectangle)
                         {
+                            float yMaxAngle = Mathf.Acos(lightComponent.areaSize.x / (2 * lightComponent.range)) *
+                                              (180 / Mathf.PI);
+                            float xMaxAngle = Mathf.Acos(lightComponent.areaSize.x / (2 * lightComponent.range)) *
+                                              (180 / Mathf.PI);
+
+                            bool isOK = true;
+
+                            // check for xz-plane
+                            if (Math.Abs(Vector3.SignedAngle(lightSource.transform.forward, -tileToLightSource,
+                                    Vector3.up)) <= 90)
+                            {
+                                if (Math.Abs(Vector3.SignedAngle(lightSource.transform.forward, -tileToLightSource,
+                                        Vector3.up)) <= yMaxAngle)
+                                {
+                                    if (Math.Abs(tileToLightSource.z) > lightComponent.range)
+                                    {
+                                        isOK = false;
+                                    }
+                                }
+                                else
+                                {
+                                    Vector3 sourceToTilePositive = -tileToLightSource;
+                                    sourceToTilePositive.x = Math.Abs(sourceToTilePositive.x);
+
+                                    Vector3 radialCornerChecker =
+                                        sourceToTilePositive - new Vector3(lightComponent.areaSize.x / 2, 0, 0);
+
+                                    if ((radialCornerChecker.x * radialCornerChecker.x) + (radialCornerChecker.z * radialCornerChecker.z) > lightComponent.range * lightComponent.range)
+                                    {
+                                        isOK = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                isOK = false;
+                            }
+                            
+                            // check for yz-plane
+                            if (Math.Abs(Vector3.SignedAngle(lightSource.transform.forward, -tileToLightSource,
+                                    Vector3.forward)) <= 90)
+                            {
+                                if (Math.Abs(Vector3.SignedAngle(lightSource.transform.forward, -tileToLightSource,
+                                        Vector3.up)) <= xMaxAngle)
+                                {
+                                    if (Math.Abs(tileToLightSource.z) > lightComponent.range)
+                                    {
+                                        isOK = false;
+                                    }
+                                }
+                                else
+                                {
+                                    Vector3 sourceToTilePositive = -tileToLightSource;
+                                    sourceToTilePositive.y = Math.Abs(sourceToTilePositive.y);
+
+                                    Vector3 radialCornerChecker =
+                                        sourceToTilePositive - new Vector3(0, lightComponent.areaSize.y / 2, 0);
+
+                                    if ((radialCornerChecker.y * radialCornerChecker.y) + (radialCornerChecker.z * radialCornerChecker.z) > lightComponent.range * lightComponent.range)
+                                    {
+                                        isOK = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                isOK = false;
+                            }
+                            
+                            // check for xy-plane
+                            if (Math.Abs(-tileToLightSource.x) > lightComponent.areaSize.x/2 + lightComponent.range)
+                            {
+                                isOK = false;
+                            } else if (Math.Abs(-tileToLightSource.y) > lightComponent.areaSize.y / 2 + lightComponent.range )
+                            {
+                                isOK = false;
+                            }
+                            else
+                            {
+                                Vector3 sourceToTilePositive = -tileToLightSource;
+                                sourceToTilePositive.y = Math.Abs(sourceToTilePositive.y);
+                                sourceToTilePositive.x = Math.Abs(sourceToTilePositive.x);
+                                
+                                Vector3 radialCornerChecker =
+                                    sourceToTilePositive - new Vector3(lightComponent.areaSize.x / 2, lightComponent.areaSize.y / 2, 0);
+                                
+                                if ((radialCornerChecker.y * radialCornerChecker.y) + (radialCornerChecker.x * radialCornerChecker.x) > lightComponent.range * lightComponent.range)
+                                {
+                                    isOK = false;
+                                }
+                            }
+
+
+                            if (isOK)
+                            {
+                                illuminationBuffer += 1;
+                            }
                         }
                         else if (lightComponent.type == LightType.Point)
                         {
+                            if (tileToLightSource.magnitude <= lightComponent.range)
+                            {
+                                RaycastHit hitInfoLight = new RaycastHit();
+                                bool hitLight = Physics.Raycast(pointForCheck, tileToLightSource,
+                                    out hitInfoLight, tileToLightSource.magnitude);
+                                if (!hitLight)
+                                {
+                                    illuminationBuffer += 1;
+                                }
+                            }
                         }
                     }
 

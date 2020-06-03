@@ -54,7 +54,7 @@ namespace DefaultNamespace
                 yield return null;
             }
 
-            targetBC.characterDataComponent.hp -= 50;
+            targetBC.characterDataComponent.DeltaHP((attackerBC.characterDataComponent.baseDamage*attackerBC.characterDataComponent.baseDamage) + attackerBC.characterDataComponent.damageAddModifier);
             Destroy(projectile);
             
             EndEvent(out battleManager.busy);

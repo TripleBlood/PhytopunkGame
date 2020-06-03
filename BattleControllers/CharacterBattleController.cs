@@ -206,6 +206,7 @@ namespace DefaultNamespace
             {
                 if (i + 1 < characterDataComponent.abilities.Count)
                 {
+                    abilityBtnList[i].SetActive(true);
                     abilityBtnList[i].GetComponent<Image>().sprite =
                         Resources.Load(AbilityUtils.GetAbilityIcon(characterDataComponent.abilities[i + 1]),
                             typeof(Sprite)) as Sprite;

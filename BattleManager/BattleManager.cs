@@ -173,7 +173,7 @@ public class BattleManager : MonoBehaviour
     {
         GameObject bottomUICanvas = mainUI.transform.Find("BottomUI").gameObject;
         GameObject abilityPanel = bottomUICanvas.transform.Find("AbilityPanel").gameObject;
-        Debug.Log(abilityPanel.GetComponent<Image>().sprite.name);
+        // Debug.Log(abilityPanel.GetComponent<Image>().sprite.name);
         
         List<GameObject> btns = new List<GameObject>();
 

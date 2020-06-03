@@ -17,7 +17,7 @@ namespace DefaultNamespace
             this.effectIcon = gameObject.transform.GetComponent<Image>();
             this.counter = gameObject.transform.Find("TextPanel").Find("Counter").GetComponent<Text>();
 
-            Debug.Log(effectIcon.sprite.name);
+            // Debug.Log(effectIcon.sprite.name);
             
             UpdateIcon("AbilityIcons/OverloadAbIcon");
         }

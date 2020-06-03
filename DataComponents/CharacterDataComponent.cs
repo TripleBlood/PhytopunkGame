@@ -31,6 +31,9 @@ namespace DefaultNamespace
         public int epRecoveryModifier;
 
         //DamageModifiers?
+        public int baseDamage;
+        public double damageMultModifier;
+        public int damageAddModifier;
 
         public int speed;
         public int speedModifier;

@@ -12,6 +12,8 @@ namespace DefaultNamespace.Utils
                     return typeof(MoveAndAttackTargetingController);
                 case "Overload":
                     return typeof(OverloadTargetingController);
+                case "Adrenaline":
+                    return typeof(AdrenalineTargetingController);
             }
             return typeof(MoveAndAttackTargetingController);
         }
@@ -28,6 +30,8 @@ namespace DefaultNamespace.Utils
                     return "AbilityIcons/OverloadAbIcon";
                 case "Flare":
                     return "AbilityIcons/FlareAbIcon";
+                case "Adrenaline":
+                    return "AbilityIcons/AdrenalineAbIcon";
             }
             return "AbilityIcons/FlareAbIcon";
         }

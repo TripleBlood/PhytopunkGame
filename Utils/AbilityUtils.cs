@@ -12,10 +12,20 @@ namespace DefaultNamespace.Utils
                     return typeof(MoveAndAttackTargetingController);
                 case "Overload":
                     return typeof(OverloadTargetingController);
+                case "Flare":
+                    return typeof(FlareTargetingController); //
                 case "Adrenaline":
                     return typeof(AdrenalineTargetingController);
                 case "Stimulator":
                     return typeof(StimulatorTargetingController);
+                case "Cryoblast":
+                    return typeof(CryoblastTargetingController);
+                case "Sniper Shot":
+                    return typeof(OverloadTargetingController); //
+                case "Splitshot":
+                    return typeof(OverloadTargetingController); //
+                case "Vulnerability Scan":
+                    return typeof(OverloadTargetingController); //
             }
             return typeof(MoveAndAttackTargetingController);
         }
@@ -36,6 +46,14 @@ namespace DefaultNamespace.Utils
                     return "AbilityIcons/AdrenalineAbIcon";
                 case "Stimulator":
                     return "AbilityIcons/StimulatorAbIcon";
+                case "Cryoblast":
+                    return "AbilityIcons/CryoblastAbIcon";
+                case "Sniper Shot":
+                    return "AbilityIcons/SniperShotAbIcon";
+                case "Splitshot":
+                    return "AbilityIcons/SplitshotAbIcon";
+                case "Vulnerability Scan":
+                    return "AbilityIcons/VulnerabilityScanAbIcon";
             }
             return "AbilityIcons/FlareAbIcon";
         }
@@ -56,7 +74,7 @@ namespace DefaultNamespace.Utils
                     break;
                 case "Flare":
                     result[0] = 2;
-                    result[1] = 1;
+                    result[1] = 2;
                     break;
                 case "Adrenaline":
                     result[0] = -1;
@@ -65,6 +83,22 @@ namespace DefaultNamespace.Utils
                 case "Stimulator":
                     result[0] = 2;
                     result[1] = -1;
+                    break;
+                case "Cryoblast":
+                    result[0] = 2;
+                    result[1] = 2;
+                    break;
+                case "Sniper Shot":
+                    result[0] = 2;
+                    result[1] = 1;
+                    break;
+                case "Splitshot":
+                    result[0] = 2;
+                    result[1] = 1;
+                    break;
+                case "Vulnerability Scan":
+                    result[0] = 2;
+                    result[1] = 1;
                     break;
             }
             return result;

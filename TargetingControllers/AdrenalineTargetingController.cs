@@ -41,8 +41,11 @@ namespace DefaultNamespace
             try
             {
                 currentCharControl.DeltaAP(2);
+                currentCharControl.SetCD(typeof(AdrenalineTargetingController) , 3);
                 AdrenalineEffect adrenalineEffect = new AdrenalineEffect(currentCharControl);
-                StartCoroutine(adrenalineEffect.ApplyEffect(_currentCharacterDataComponent.effects));
+                
+                currentCharControl.TryAddEffect(adrenalineEffect, currentCharControl.characterDataComponent.effects);
+                // StartCoroutine(adrenalineEffect.ApplyEffect(_currentCharacterDataComponent.effects));
             }
             catch (Exception e)
             {

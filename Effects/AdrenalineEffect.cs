@@ -24,7 +24,7 @@ namespace DefaultNamespace
         
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
-            effects.Add(this);
+            //effects.Add(this);
             characterBattleController.AddEffect(this, effects);
                 
             characterBattleController.characterDataComponent.apRecoveryModifier -= 2;
@@ -37,7 +37,7 @@ namespace DefaultNamespace
             try
             {
                 characterBattleController.characterDataComponent.apRecoveryModifier += 2;
-                effects.Remove(this);
+                // effects.Remove(this);
             }
             catch (Exception e)
             {

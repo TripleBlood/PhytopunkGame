@@ -175,7 +175,7 @@ namespace DefaultNamespace
             try
             {
                 stimulatorAbility.SetProperties("Stimulator",
-                    "Zapps target, dealing 20 damage and applying \"Shocked\" status for 2 turns", 2, 0, 4, 4, true);
+                    "Heal 25 hp. Applies \"Stimulator\"", 2, 0, 4, 4, true);
                 stimulatorAbility.battleManager = battleManager;
                 stimulatorAbility.targetBC = targetForAttack;
                 stimulatorAbility.attackerBC = currentCharControl;

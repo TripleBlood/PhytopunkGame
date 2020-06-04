@@ -37,7 +37,7 @@ namespace DefaultNamespace
                         i--;
                         
                         WetEffect wetEffect = new WetEffect(characterBattleController);
-                        characterBattleController.AddEffect(wetEffect, effects);
+                        characterBattleController.TryAddEffect(wetEffect, effects);
                     }
                 }
                 catch (Exception e)
@@ -48,10 +48,10 @@ namespace DefaultNamespace
 
             if (noInteruption)
             {
-                effects.Add(this);
+                //effects.Add(this);
                 characterBattleController.AddEffect(this, effects);
             
-                Debug.Log(characterBattleController.gameObject.name +  " is burning");
+                Debug.Log(characterBattleController.gameObject.name +  " is frozen");
                 yield return null;
             }
         }
@@ -61,14 +61,14 @@ namespace DefaultNamespace
             try
             {
                 WetEffect wetEffect = new WetEffect(characterBattleController);
-                characterBattleController.AddEffect(wetEffect, effects);
+                characterBattleController.TryAddEffect(wetEffect, effects);
                 
-                characterBattleController.DestroyEffect(this, effects);
+                // characterBattleController.DestroyEffect(this, effects);
                 // effects.Remove(this);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.Log(e);
                 Debug.Log("Error in removal!");
             }
             Debug.Log("Freeze effect were off");

@@ -17,7 +17,7 @@ namespace DefaultNamespace
             this.duration = 1;
             
             // TODO: need to change icon!
-            this.iconResourceURL = "AbilityIcons/CryoblastAbIcon";
+            this.iconResourceURL = "AbilityIcons/ConfirmIcon";
 
             this.despelable = true;
             this.positive = false;
@@ -31,13 +31,13 @@ namespace DefaultNamespace
             {
                 try
                 {
-                    if (effects[i].name.Equals("Shock") || effects[i].name.Equals("Wet"))
+                    if (effects[i].name.Equals("Shock"))
                     {
                         noInteruption = false;
                         characterBattleController.DestroyEffect(effects[i], effects);
                         
                         StunnedEffect stunnedEffect = new StunnedEffect(characterBattleController);
-                        characterBattleController.AddEffect(stunnedEffect, effects);
+                        characterBattleController.TryAddEffect(stunnedEffect, effects);
                         i--;
                     }
                 }
@@ -47,7 +47,7 @@ namespace DefaultNamespace
                 }
             }
             
-            effects.Add(this);
+            //effects.Add(this);
             characterBattleController.AddEffect(this, effects);
             
             Debug.Log(characterBattleController.gameObject.name +  " is wet");
@@ -58,12 +58,12 @@ namespace DefaultNamespace
         {
             try
             {
-                characterBattleController.DestroyEffect(this, effects);
+                // characterBattleController.DestroyEffect(this, effects);
                 // effects.Remove(this);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.Log(e);
                 Debug.Log("Error in removal!");
             }
             Debug.Log("Wet effect were off");

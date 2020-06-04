@@ -43,12 +43,12 @@ namespace DefaultNamespace
             if (targetBC != attackerBC)
             {
                 Debug.Log(targetBC == attackerBC);
-                // while ((projectile.transform.position - destination).magnitude >= 0.005f)
-                // {
-                //     projectile.transform.position =
-                //         Vector3.MoveTowards(projectile.transform.position, destination, 10 * Time.deltaTime);
-                //     yield return null;
-                // }
+                while ((projectile.transform.position - destination).magnitude >= 0.005f)
+                {
+                    projectile.transform.position =
+                        Vector3.MoveTowards(projectile.transform.position, destination, 10 * Time.deltaTime);
+                    yield return null;
+                }
             }
 
             targetBC.DeltaHP(25);
@@ -56,7 +56,7 @@ namespace DefaultNamespace
 
             StimulatorEffect stimulatorEffect = new StimulatorEffect(targetBC);
             
-            targetBC.AddEffect(stimulatorEffect, targetBC.characterDataComponent.effects);
+            targetBC.TryAddEffect(stimulatorEffect, targetBC.characterDataComponent.effects);
             
             // StartCoroutine(stimulatorEffect.ApplyEffect(targetBC.characterDataComponent.effects));
 

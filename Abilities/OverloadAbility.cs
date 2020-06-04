@@ -42,7 +42,7 @@ namespace DefaultNamespace
 
             ShockEffect shockEffect = new ShockEffect(target);
             
-            target.AddEffect(shockEffect, target.characterDataComponent.effects);
+            target.TryAddEffect(shockEffect, target.characterDataComponent.effects);
             
             // StartCoroutine(shockEffect.ApplyEffect(target.characterDataComponent.effects));
             

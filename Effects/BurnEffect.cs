@@ -37,8 +37,8 @@ namespace DefaultNamespace
                         characterBattleController.DestroyEffect(effects[i], effects);
                         i--;
                         
-                        WetEffect wetEffect = new WetEffect(characterBattleController);
-                        characterBattleController.AddEffect(wetEffect, effects);
+                        // WetEffect wetEffect = new WetEffect(characterBattleController);
+                        // characterBattleController.TryAddEffect(wetEffect, effects);
                     }
                 }
                 catch (Exception e)
@@ -49,7 +49,7 @@ namespace DefaultNamespace
 
             if (noInteruption)
             {
-                effects.Add(this);
+                //effects.Add(this);
                 characterBattleController.AddEffect(this, effects);
             
                 Debug.Log(characterBattleController.gameObject.name +  " is burning");
@@ -61,7 +61,7 @@ namespace DefaultNamespace
         {
             try
             {
-                characterBattleController.DestroyEffect(this, effects);
+                // characterBattleController.DestroyEffect(this, effects);
                 // effects.Remove(this);
             }
             catch (Exception e)

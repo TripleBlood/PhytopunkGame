@@ -23,7 +23,7 @@ namespace DefaultNamespace
         
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
-            effects.Add(this);
+            //effects.Add(this);
             characterBattleController.AddEffect(this, effects);
                 
             characterBattleController.characterDataComponent.apRecoveryModifier += 1;
@@ -40,7 +40,7 @@ namespace DefaultNamespace
                 characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
                 characterBattleController.characterDataComponent.speedModifier -= 1;
                 
-                characterBattleController.DestroyEffect(this, effects);
+                // characterBattleController.DestroyEffect(this, effects);
                 // effects.Remove(this);
             }
             catch (Exception e)

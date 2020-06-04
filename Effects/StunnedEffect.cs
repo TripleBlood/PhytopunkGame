@@ -42,7 +42,7 @@ namespace DefaultNamespace
 
             if (noInteruption)
             {
-                effects.Add(this);
+                //effects.Add(this);
                 characterBattleController.AddEffect(this, effects);
             
                 Debug.Log(characterBattleController.gameObject.name +  " is stunned");
@@ -54,7 +54,7 @@ namespace DefaultNamespace
         {
             try
             {
-                characterBattleController.DestroyEffect(this, effects);
+                // characterBattleController.DestroyEffect(this, effects);
                 // effects.Remove(this);
             }
             catch (Exception e)

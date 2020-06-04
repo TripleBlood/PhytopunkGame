@@ -37,13 +37,13 @@ namespace DefaultNamespace
                     {
                         noInteruption = false;
                     }
-                    if (effects[i].name.Equals("Shocked") || effects[i].name.Equals("Wet"))
+                    if (effects[i].name.Equals("Wet") || effects[i].name.Equals("Shocked"))
                     {
                         noInteruption = false;
                         characterBattleController.DestroyEffect(effects[i], effects);
                         
                         StunnedEffect stunnedEffect = new StunnedEffect(characterBattleController);
-                        characterBattleController.AddEffect(stunnedEffect, effects);
+                        characterBattleController.TryAddEffect(stunnedEffect, effects);
                         
                         i--;
                     }
@@ -56,7 +56,7 @@ namespace DefaultNamespace
 
             if (noInteruption)
             {
-                effects.Add(this);
+                //effects.Add(this);
                 characterBattleController.AddEffect(this, effects);
                 
                 characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
@@ -70,7 +70,7 @@ namespace DefaultNamespace
             try
             {
                 characterBattleController.characterDataComponent.apRecoveryModifier += 1;
-                effects.Remove(this);
+                // effects.Remove(this);
             }
             catch (Exception e)
             {

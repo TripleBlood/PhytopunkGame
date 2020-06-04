@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace DefaultNamespace
 {
-    public class FlareTargetingController : TargetingController
+    public class CryoblastTargetingController : TargetingController
     {
         private GameObject courser;
 
@@ -170,26 +170,26 @@ namespace DefaultNamespace
         public override void ConfirmTarget()
         {
             //Rewrite
-            Type type = typeof(FlareAbility);
-            FlareAbility flareAbility = (FlareAbility) battleManager.gameObject.AddComponent(type);
+            Type type = typeof(CryoblastAbility);
+            CryoblastAbility cryoblastAbility = (CryoblastAbility) battleManager.gameObject.AddComponent(type);
 
             try
             {
-                flareAbility.SetProperties("Flare",
-                    "Deals 25 damage and applies \"Burn\"", 2, 2, 4, 4, true);
-                flareAbility.battleManager = battleManager;
-                flareAbility.targetBC = targetForAttack;
-                flareAbility.attackerBC = currentCharControl;
-                flareAbility.origin = originForAttack;
-                flareAbility.destination = destinationForAttcak;
+                cryoblastAbility.SetProperties("Cryoblast",
+                    "Deals 20 damage and freezes target", 2, 2, 4, 4, true);
+                cryoblastAbility.battleManager = battleManager;
+                cryoblastAbility.targetBC = targetForAttack;
+                cryoblastAbility.attackerBC = currentCharControl;
+                cryoblastAbility.origin = originForAttack;
+                cryoblastAbility.destination = destinationForAttcak;
 
-                currentCharControl.SetCD(typeof(FlareTargetingController), 4);
+                currentCharControl.SetCD(typeof(CryoblastTargetingController), 4);
                 currentCharControl.DeltaAP(-2);
                 currentCharControl.DeltaEP(-2);
 
-                flareAbility.initiated = true;
+                cryoblastAbility.initiated = true;
 
-                battleManager.eventQueue.Add(flareAbility);
+                battleManager.eventQueue.Add(cryoblastAbility);
 
                 // Some shit
             }

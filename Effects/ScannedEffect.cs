@@ -23,7 +23,7 @@ namespace DefaultNamespace
         
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
-            effects.Add(this);
+            //effects.Add(this);
             characterBattleController.AddEffect(this, effects);
                 
             characterBattleController.characterDataComponent.damageMultModifier *= 1.5;
@@ -38,7 +38,7 @@ namespace DefaultNamespace
             {
                 characterBattleController.characterDataComponent.damageMultModifier /= 1.5;
                 
-                characterBattleController.DestroyEffect(this, effects);
+                // characterBattleController.DestroyEffect(this, effects);
                 // effects.Remove(this);
             }
             catch (Exception e)

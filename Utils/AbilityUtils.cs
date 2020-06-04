@@ -14,6 +14,8 @@ namespace DefaultNamespace.Utils
                     return typeof(OverloadTargetingController);
                 case "Adrenaline":
                     return typeof(AdrenalineTargetingController);
+                case "Stimulator":
+                    return typeof(StimulatorTargetingController);
             }
             return typeof(MoveAndAttackTargetingController);
         }
@@ -32,6 +34,8 @@ namespace DefaultNamespace.Utils
                     return "AbilityIcons/FlareAbIcon";
                 case "Adrenaline":
                     return "AbilityIcons/AdrenalineAbIcon";
+                case "Stimulator":
+                    return "AbilityIcons/StimulatorAbIcon";
             }
             return "AbilityIcons/FlareAbIcon";
         }
@@ -54,8 +58,15 @@ namespace DefaultNamespace.Utils
                     result[0] = 2;
                     result[1] = 1;
                     break;
+                case "Adrenaline":
+                    result[0] = -1;
+                    result[1] = -1;
+                    break;
+                case "Stimulator":
+                    result[0] = 2;
+                    result[1] = -1;
+                    break;
             }
-
             return result;
         }
     }

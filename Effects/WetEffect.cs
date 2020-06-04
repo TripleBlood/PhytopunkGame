@@ -6,45 +6,38 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
-    public class ShockEffect : Effect
+    public class WetEffect : Effect
     {
-        public ShockEffect(CharacterBattleController characterBattleController)
+        public WetEffect(CharacterBattleController characterBattleController)
         {
             this.characterBattleController = characterBattleController;
-            this.name = "Shocked";
-            this.description = "-1 EP recovery per turn";
-            this.baseDuration = 2;
-            this.duration = 2;
-            this.iconResourceURL = "AbilityIcons/OverloadAbIcon";
+            this.name = "Wet";
+            this.description = "Just wet, beware of electricity!";
+            this.baseDuration = 1;
+            this.duration = 1;
+            
+            // TODO: need to change icon!
+            this.iconResourceURL = "AbilityIcons/CryoblastAbIcon";
 
             this.despelable = true;
             this.positive = false;
         }
-        
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
-            // Here I can check other effects in list...
-            
             bool noInteruption = true;
 
             int limit = effects.Count;
-            
             for (int i = 0; i < limit; i++)
             {
                 try
                 {
-                    if (effects[i].name.Equals("Frozen"))
-                    {
-                        noInteruption = false;
-                    }
-                    if (effects[i].name.Equals("Shocked") || effects[i].name.Equals("Wet"))
+                    if (effects[i].name.Equals("Shock") || effects[i].name.Equals("Wet"))
                     {
                         noInteruption = false;
                         characterBattleController.DestroyEffect(effects[i], effects);
                         
                         StunnedEffect stunnedEffect = new StunnedEffect(characterBattleController);
                         characterBattleController.AddEffect(stunnedEffect, effects);
-                        
                         i--;
                     }
                 }
@@ -53,31 +46,27 @@ namespace DefaultNamespace
                     Console.WriteLine(e);
                 }
             }
-
-            if (noInteruption)
-            {
-                effects.Add(this);
-                characterBattleController.AddEffect(this, effects);
-                
-                characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
-                Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
-                yield return null;
-            }
+            
+            effects.Add(this);
+            characterBattleController.AddEffect(this, effects);
+            
+            Debug.Log(characterBattleController.gameObject.name +  " is wet");
+            yield return null;
         }
 
         public override IEnumerator WereOffEffect(List<Effect> effects)
         {
             try
             {
-                characterBattleController.characterDataComponent.apRecoveryModifier += 1;
-                effects.Remove(this);
+                characterBattleController.DestroyEffect(this, effects);
+                // effects.Remove(this);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 Debug.Log("Error in removal!");
             }
-            Debug.Log("Unzapped");
+            Debug.Log("Wet effect were off");
             yield return null;
         }
 
@@ -92,7 +81,7 @@ namespace DefaultNamespace
             {
                 Console.WriteLine(e);
             }
-            Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
+            Debug.Log(characterBattleController.gameObject.name +  " is wet for " + duration + " turns."   );
             yield return null;
         }
 

@@ -16,6 +16,7 @@ public class BattleManager : MonoBehaviour
 
     public List<BattleController> battleControllersQueue;
     public BattleController currentBattleController;
+    private bool inTurn;
 
     public TargetingController currentTargetController;
 
@@ -53,6 +54,8 @@ public class BattleManager : MonoBehaviour
     public GameObject Hp => hp;
     public GameObject EffectPanel => effectPanel;
 
+    public List<GameObject> lightSources;
+
     private void Awake()
     {
         map = new Map(floors, width, length, xOffset, zOffset, yOffset);
@@ -85,6 +88,7 @@ public class BattleManager : MonoBehaviour
 
         Type type = typeof(InitiatePositions);
         InitiatePositions initiateEvent = (InitiatePositions) gameObject.AddComponent(type);
+        busy = true;
         initiateEvent.battleManager = this;
         initiateEvent.SetCharacters(characters);
         initiateEvent.map = map;
@@ -108,9 +112,9 @@ public class BattleManager : MonoBehaviour
         }
 
         initiateEvent.active = true;
-
-
-        StartTurn();
+        map.UpdateIllumination(lightSources);
+        
+        // StartTurn();
     }
 
     /// <summary>
@@ -123,7 +127,8 @@ public class BattleManager : MonoBehaviour
         currentBattleController.enabled = false;
         battleControllersQueue.Add(currentBattleController);
         battleControllersQueue.RemoveAt(0);
-        StartTurn();
+        inTurn = false;
+        // StartTurn();
     }
 
     void StartTurn()
@@ -136,11 +141,6 @@ public class BattleManager : MonoBehaviour
         // currentTargetController.Construct(this, map, currentBattleController);
 
         currentBattleController.BeginTurn();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
     }
 
     // Update is called once per frame
@@ -165,6 +165,14 @@ public class BattleManager : MonoBehaviour
                     currentEvent.active = true;
                     busy = true;
                 }
+            }
+            else
+            {
+                if (!inTurn)
+                {
+                    inTurn = true;
+                    StartTurn();
+                }   
             }
         }
     }

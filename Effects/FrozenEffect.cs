@@ -6,16 +6,16 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
-    public class ShockEffect : Effect
+    public class FrozenEffect : Effect
     {
-        public ShockEffect(CharacterBattleController characterBattleController)
+        public FrozenEffect(CharacterBattleController characterBattleController)
         {
             this.characterBattleController = characterBattleController;
-            this.name = "Shocked";
-            this.description = "-1 EP recovery per turn";
-            this.baseDuration = 2;
-            this.duration = 2;
-            this.iconResourceURL = "AbilityIcons/OverloadAbIcon";
+            this.name = "Frozen";
+            this.description = "Skips turn";
+            this.baseDuration = 1;
+            this.duration = 1;
+            this.iconResourceURL = "AbilityIcons/CryoblastAbIcon";
 
             this.despelable = true;
             this.positive = false;
@@ -23,29 +23,21 @@ namespace DefaultNamespace
         
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
-            // Here I can check other effects in list...
-            
             bool noInteruption = true;
 
             int limit = effects.Count;
-            
             for (int i = 0; i < limit; i++)
             {
                 try
                 {
-                    if (effects[i].name.Equals("Frozen"))
-                    {
-                        noInteruption = false;
-                    }
-                    if (effects[i].name.Equals("Shocked") || effects[i].name.Equals("Wet"))
+                    if (effects[i].name.Equals("Burn"))
                     {
                         noInteruption = false;
                         characterBattleController.DestroyEffect(effects[i], effects);
-                        
-                        StunnedEffect stunnedEffect = new StunnedEffect(characterBattleController);
-                        characterBattleController.AddEffect(stunnedEffect, effects);
-                        
                         i--;
+                        
+                        WetEffect wetEffect = new WetEffect(characterBattleController);
+                        characterBattleController.AddEffect(wetEffect, effects);
                     }
                 }
                 catch (Exception e)
@@ -58,9 +50,8 @@ namespace DefaultNamespace
             {
                 effects.Add(this);
                 characterBattleController.AddEffect(this, effects);
-                
-                characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
-                Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
+            
+                Debug.Log(characterBattleController.gameObject.name +  " is burning");
                 yield return null;
             }
         }
@@ -69,15 +60,18 @@ namespace DefaultNamespace
         {
             try
             {
-                characterBattleController.characterDataComponent.apRecoveryModifier += 1;
-                effects.Remove(this);
+                WetEffect wetEffect = new WetEffect(characterBattleController);
+                characterBattleController.AddEffect(wetEffect, effects);
+                
+                characterBattleController.DestroyEffect(this, effects);
+                // effects.Remove(this);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 Debug.Log("Error in removal!");
             }
-            Debug.Log("Unzapped");
+            Debug.Log("Freeze effect were off");
             yield return null;
         }
 
@@ -86,13 +80,14 @@ namespace DefaultNamespace
             duration -= 1;
             try
             {
+                characterBattleController.skipTurn = true;
                 uiEffectController.UpdatCounter(duration.ToString());
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
+            Debug.Log(characterBattleController.gameObject.name +  " is frozen for " + duration + " turns."   );
             yield return null;
         }
 

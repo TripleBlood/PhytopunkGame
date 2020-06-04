@@ -6,46 +6,32 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
-    public class ShockEffect : Effect
+    public class StunnedEffect : Effect
     {
-        public ShockEffect(CharacterBattleController characterBattleController)
+        public StunnedEffect(CharacterBattleController characterBattleController)
         {
             this.characterBattleController = characterBattleController;
-            this.name = "Shocked";
-            this.description = "-1 EP recovery per turn";
-            this.baseDuration = 2;
-            this.duration = 2;
+            this.name = "Stunned";
+            this.description = "Skips turn";
+            this.baseDuration = 1;
+            this.duration = 1;
             this.iconResourceURL = "AbilityIcons/OverloadAbIcon";
 
             this.despelable = true;
             this.positive = false;
         }
-        
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
-            // Here I can check other effects in list...
-            
             bool noInteruption = true;
 
             int limit = effects.Count;
-            
             for (int i = 0; i < limit; i++)
             {
                 try
                 {
-                    if (effects[i].name.Equals("Frozen"))
+                    if (effects[i].name.Equals("Stunned"))
                     {
                         noInteruption = false;
-                    }
-                    if (effects[i].name.Equals("Shocked") || effects[i].name.Equals("Wet"))
-                    {
-                        noInteruption = false;
-                        characterBattleController.DestroyEffect(effects[i], effects);
-                        
-                        StunnedEffect stunnedEffect = new StunnedEffect(characterBattleController);
-                        characterBattleController.AddEffect(stunnedEffect, effects);
-                        
-                        i--;
                     }
                 }
                 catch (Exception e)
@@ -58,9 +44,8 @@ namespace DefaultNamespace
             {
                 effects.Add(this);
                 characterBattleController.AddEffect(this, effects);
-                
-                characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
-                Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
+            
+                Debug.Log(characterBattleController.gameObject.name +  " is stunned");
                 yield return null;
             }
         }
@@ -69,15 +54,15 @@ namespace DefaultNamespace
         {
             try
             {
-                characterBattleController.characterDataComponent.apRecoveryModifier += 1;
-                effects.Remove(this);
+                characterBattleController.DestroyEffect(this, effects);
+                // effects.Remove(this);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 Debug.Log("Error in removal!");
             }
-            Debug.Log("Unzapped");
+            Debug.Log("Stun effect were off");
             yield return null;
         }
 
@@ -86,13 +71,14 @@ namespace DefaultNamespace
             duration -= 1;
             try
             {
+                characterBattleController.skipTurn = true;
                 uiEffectController.UpdatCounter(duration.ToString());
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
+            Debug.Log(characterBattleController.gameObject.name +  " is stunned for " + duration + " turns."   );
             yield return null;
         }
 

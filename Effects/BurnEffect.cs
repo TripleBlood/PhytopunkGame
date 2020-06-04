@@ -6,16 +6,17 @@ using UnityEngine;
 
 namespace DefaultNamespace
 {
-    public class ShockEffect : Effect
+    public class BurnEffect : Effect
     {
-        public ShockEffect(CharacterBattleController characterBattleController)
+        
+        public BurnEffect(CharacterBattleController characterBattleController)
         {
             this.characterBattleController = characterBattleController;
-            this.name = "Shocked";
-            this.description = "-1 EP recovery per turn";
-            this.baseDuration = 2;
-            this.duration = 2;
-            this.iconResourceURL = "AbilityIcons/OverloadAbIcon";
+            this.name = "Burn";
+            this.description = "-10 HP every turn";
+            this.baseDuration = 3;
+            this.duration = 3;
+            this.iconResourceURL = "AbilityIcons/FlareAbIcon";
 
             this.despelable = true;
             this.positive = false;
@@ -23,12 +24,9 @@ namespace DefaultNamespace
         
         public override IEnumerator ApplyEffect(List<Effect> effects)
         {
-            // Here I can check other effects in list...
-            
             bool noInteruption = true;
 
             int limit = effects.Count;
-            
             for (int i = 0; i < limit; i++)
             {
                 try
@@ -36,16 +34,11 @@ namespace DefaultNamespace
                     if (effects[i].name.Equals("Frozen"))
                     {
                         noInteruption = false;
-                    }
-                    if (effects[i].name.Equals("Shocked") || effects[i].name.Equals("Wet"))
-                    {
-                        noInteruption = false;
                         characterBattleController.DestroyEffect(effects[i], effects);
-                        
-                        StunnedEffect stunnedEffect = new StunnedEffect(characterBattleController);
-                        characterBattleController.AddEffect(stunnedEffect, effects);
-                        
                         i--;
+                        
+                        WetEffect wetEffect = new WetEffect(characterBattleController);
+                        characterBattleController.AddEffect(wetEffect, effects);
                     }
                 }
                 catch (Exception e)
@@ -58,9 +51,8 @@ namespace DefaultNamespace
             {
                 effects.Add(this);
                 characterBattleController.AddEffect(this, effects);
-                
-                characterBattleController.characterDataComponent.apRecoveryModifier -= 1;
-                Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
+            
+                Debug.Log(characterBattleController.gameObject.name +  " is burning");
                 yield return null;
             }
         }
@@ -69,15 +61,15 @@ namespace DefaultNamespace
         {
             try
             {
-                characterBattleController.characterDataComponent.apRecoveryModifier += 1;
-                effects.Remove(this);
+                characterBattleController.DestroyEffect(this, effects);
+                // effects.Remove(this);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 Debug.Log("Error in removal!");
             }
-            Debug.Log("Unzapped");
+            Debug.Log("Burn effect were off");
             yield return null;
         }
 
@@ -86,13 +78,14 @@ namespace DefaultNamespace
             duration -= 1;
             try
             {
+                characterBattleController.DeltaHP(-10);
                 uiEffectController.UpdatCounter(duration.ToString());
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            Debug.Log(characterBattleController.gameObject.name +  " is zapped for " + duration + " turns."   );
+            Debug.Log(characterBattleController.gameObject.name +  " is burning for " + duration + " turns."   );
             yield return null;
         }
 

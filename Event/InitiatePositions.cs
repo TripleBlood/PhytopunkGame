@@ -78,6 +78,8 @@ namespace UnityEngine.Rendering
         IEnumerator MoveObject(CharacterBattleController characterBattleController, Tile currentTile, float speed,
             int index)
         {
+            map.OccupyTile(characterBattleController.gameObject, currentTile);
+            
             Vector3 destination = map.GetCoordByTileIndexes(currentTile.x, currentTile.z, currentTile.y);
             float step = speed * Time.deltaTime;
             while ((characterBattleController.gameObject.transform.position - destination).magnitude <= 0.005f)
@@ -92,7 +94,7 @@ namespace UnityEngine.Rendering
 
             //Debug.Log(map.FindTile(currentTile.x, currentTile.z, currentTile.y).occupied);
 
-            map.OccupyTile(characterBattleController.gameObject, currentTile);
+            
 
             //Debug.Log(map.FindTile(currentTile.x, currentTile.z, currentTile.y).occupied + " " + map.FindTile(currentTile.x, currentTile.z, currentTile.y).characterOnTile.name);
 

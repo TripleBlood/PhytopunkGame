@@ -4,18 +4,20 @@ using DefaultNamespace.Utils;
 using Models;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 namespace DefaultNamespace
 {
-    public class OverloadTargetingController : TargetingController
+    public class StimulatorTargetingController : TargetingController
     {
         private GameObject courser;
 
         private CharacterBattleController targetForAttack;
         private CharacterBattleController currentCharControl;
         private CharacterDataComponent _currentCharacterDataComponent;
+        
+        private Vector3 originForAttack;
+        private Vector3 destinationForAttcak;
 
         private GameObject confirmButtonGameObject;
         private Button confirmButton;
@@ -28,7 +30,7 @@ namespace DefaultNamespace
         {
             courser = Instantiate(Resources.Load("MapCoursers/mapTileCourser") as GameObject);
         }
-
+        
         private void Update()
         {
             if (initiated)
@@ -113,6 +115,9 @@ namespace DefaultNamespace
                                             if (!hitAtck || hitAtckInfo.collider.gameObject
                                                     .GetComponent<CharacterBattleController>() == targetForAttack)
                                             {
+                                                originForAttack = origin;
+                                                destinationForAttcak = destination;
+                                                
                                                 Tile curTile = targetForAttack.characterDataComponent.position;
 
                                                 Vector3 curTilePoint =
@@ -121,7 +126,7 @@ namespace DefaultNamespace
                                                 Vector2 vect2 = Camera.main.WorldToScreenPoint(vect);
 
                                                 confirmButtonGameObject =
-                                                    Instantiate(Resources.Load("UIElements/AttackBtn")) as GameObject;
+                                                    Instantiate(Resources.Load("UIElements/ConfirmBtn")) as GameObject;
                                                 confirmButtonGameObject.transform.SetParent(mainUI.transform, false);
                                                 confirmButton = confirmButtonGameObject.GetComponent<Button>();
                                                 confirmButton.onClick.AddListener(ConfirmTarget);
@@ -164,23 +169,25 @@ namespace DefaultNamespace
 
         public override void ConfirmTarget()
         {
-            Type type = typeof(OverloadAbility);
-            OverloadAbility overloadAbility = (OverloadAbility) battleManager.gameObject.AddComponent(type);
+            Type type = typeof(StimulatorAbility);
+            StimulatorAbility stimulatorAbility = (StimulatorAbility) battleManager.gameObject.AddComponent(type);
 
             try
             {
-                overloadAbility.SetProperties("Overload",
-                    "Zapps target, dealing 20 damage and applying \"Shocked\" status for 2 turns", 2, 1, 2, 2, true);
-                overloadAbility.battleManager = battleManager;
-                overloadAbility.target = targetForAttack;
+                stimulatorAbility.SetProperties("Stimulator",
+                    "Zapps target, dealing 20 damage and applying \"Shocked\" status for 2 turns", 2, 0, 4, 4, true);
+                stimulatorAbility.battleManager = battleManager;
+                stimulatorAbility.targetBC = targetForAttack;
+                stimulatorAbility.attackerBC = currentCharControl;
+                stimulatorAbility.origin = originForAttack;
+                stimulatorAbility.destination = destinationForAttcak;
 
-                currentCharControl.SetCD(typeof(OverloadTargetingController), 3);
+                currentCharControl.SetCD(typeof(StimulatorTargetingController), 4);
                 currentCharControl.DeltaAP(-2);
-                currentCharControl.DeltaEP(-1);
 
-                overloadAbility.initiated = true;
+                stimulatorAbility.initiated = true;
 
-                battleManager.eventQueue.Add(overloadAbility);
+                battleManager.eventQueue.Add(stimulatorAbility);
 
                 // Some shit
             }
@@ -205,7 +212,6 @@ namespace DefaultNamespace
             _currentCharacterDataComponent = currentCharControl.characterDataComponent;
 
             currentCharControl.DeltaAPRed(2);
-            currentCharControl.DeltaEPRed(1);
 
             initiated = true;
         }
@@ -225,23 +231,13 @@ namespace DefaultNamespace
 
             Destroy(this);
         }
-
+        
         public void Deselect()
         {
             if (targetSelected)
             {
                 Destroy(confirmButtonGameObject);
             }
-            //
-            // try
-            // {
-            //     Destroy(confirmButtonGameObject);
-            // }
-            // catch (Exception e)
-            // {
-            //     Console.WriteLine(e);
-            // }
-
 
             targetSelected = false;
         }

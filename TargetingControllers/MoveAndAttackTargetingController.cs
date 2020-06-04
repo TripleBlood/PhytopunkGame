@@ -58,7 +58,7 @@ namespace DefaultNamespace
 
             maxPathLength = _currentCharacterDataComponent.ap *
                             (_currentCharacterDataComponent.speed + _currentCharacterDataComponent.speedModifier);
-            
+
             initiated = true;
         }
 
@@ -90,7 +90,8 @@ namespace DefaultNamespace
                 if (hit)
                 {
                     //check on traversability
-                    if (map.GetTileByVectorPoint(hitInfo.point) != null && map.GetTileByVectorPoint(hitInfo.point).traversable)
+                    if (map.GetTileByVectorPoint(hitInfo.point) != null &&
+                        map.GetTileByVectorPoint(hitInfo.point).traversable)
                     {
                         courser.transform.position = map.GetCourserPosition(hitInfo.point);
                     }
@@ -137,8 +138,10 @@ namespace DefaultNamespace
                                         .Initiate(vect, new Vector2(20, 45));
 
                                     path.AddRange(curPath);
-                                    
-                                    APcostForMovement = (int) Math.Ceiling((double) path.Count / (double) _currentCharacterDataComponent.speed);
+
+                                    APcostForMovement =
+                                        (int) Math.Ceiling((double) path.Count /
+                                                           (double) (_currentCharacterDataComponent.speed + _currentCharacterDataComponent.speedModifier));
                                     currentCharControl.DeltaAPRed(APcostForMovement);
                                 }
                             }
@@ -170,7 +173,7 @@ namespace DefaultNamespace
                                 // !!!
                                 // TODO: Check if tile can be found in Dictionary, otherwise there will be error here!
                                 // !!!
-                                
+
                                 curPath = MapUtils.FindPath(map, _currentCharacterDataComponent.position,
                                     map.GetTileByVectorPoint(hitLMBInfo.point));
                                 if (curPath.Count > maxPathLength)
@@ -201,8 +204,10 @@ namespace DefaultNamespace
                                     .Initiate(vect, new Vector2(20, 45));
 
                                 path.AddRange(curPath);
-                                
-                                APcostForMovement = (int) Math.Ceiling((double) path.Count / (double) _currentCharacterDataComponent.speed);
+
+                                APcostForMovement =
+                                    (int) Math.Ceiling((double) path.Count /
+                                                       (double) _currentCharacterDataComponent.speed);
                                 currentCharControl.DeltaAPRed(APcostForMovement);
 
                                 moveConfirm = true;
@@ -242,15 +247,17 @@ namespace DefaultNamespace
                                         targetForAttack.gameObject.transform.position + Vector3.left, Color.black,
                                         3.5f);
 
-                                    int adjIndex = GetAdjIndexByAngle(angle);
+                                    int adjIndex = TargetingUtils.GetAdjIndexByAngle(angle);
                                     int opponentAdjIndex = (adjIndex + 2) % 4;
 
                                     //Debug.Log("Angle = " + angle + " - " + adjIndex + ", " + opponentAdjIndex);
 
                                     List<Vector3> attackOrigin =
-                                        GetPointsOrigin(_currentCharacterDataComponent.position, adjIndex);
+                                        TargetingUtils.GetPointsOrigin(map, _currentCharacterDataComponent.position,
+                                            adjIndex);
                                     List<Vector3> attackDestination =
-                                        GetPointsOrigin(targetForAttack.characterDataComponent.position,
+                                        TargetingUtils.GetPointsOrigin(map,
+                                            targetForAttack.characterDataComponent.position,
                                             opponentAdjIndex);
 
                                     foreach (Vector3 origin in attackOrigin)
@@ -287,7 +294,7 @@ namespace DefaultNamespace
                                                     .Initiate(vect, new Vector2(20, 45));
 
                                                 currentCharControl.DeltaAPRed(2);
-                                                
+
                                                 attackConfirm = true;
 
                                                 return;
@@ -416,106 +423,9 @@ namespace DefaultNamespace
 
             moveConfirm = false;
             attackConfirm = false;
-            
+
             currentCharControl.AvertCurrentApRedUI();
         }
-
-        public int GetAdjIndexByAngle(float angle)
-        {
-            if (Math.Abs(angle) < 45)
-            {
-                return 2;
-            }
-            else if (Math.Abs(angle) > 135)
-            {
-                return 0;
-            }
-            else if (angle > 0)
-            {
-                return 3;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-
-        private Vector3[][] pointsAdd = new Vector3[][]
-        {
-            new Vector3[3]
-            {
-                new Vector3(0, 1.5f, 0.35f),
-                new Vector3(0.65f, 1, 0.35f),
-                new Vector3(-0.65f, 1, 0.35f)
-            },
-            new Vector3[3]
-            {
-                new Vector3(0.35f, 1.5f, 0),
-                new Vector3(0.35f, 1, 0.65f),
-                new Vector3(0.35f, 1, -0.65f)
-            },
-            new Vector3[3]
-            {
-                new Vector3(0, 1.5f, -0.35f),
-                new Vector3(0.65f, 1, -0.35f),
-                new Vector3(-0.65f, 1, -0.35f)
-            },
-            new Vector3[3]
-            {
-                new Vector3(-0.35f, 1.5f, 0),
-                new Vector3(-0.35f, 1, 0.65f),
-                new Vector3(-0.35f, 1, -0.65f)
-            }
-        };
-
-        List<Vector3> GetPointsOrigin(Tile tile, int index)
-        {
-            List<Vector3> result = new List<Vector3>();
-            if (index > 3 || index < 0)
-            {
-                return new List<Vector3>();
-            }
-
-            int cover = tile.CoverArray[index];
-            if (cover == 1)
-            {
-                result = pointsAdd[index].ToList();
-
-                for (int i = 0; i < result.Count; i++)
-                {
-                    result[i] += map.GetCoordByTileIndexes(tile.x, tile.z, tile.y);
-                }
-
-                return result;
-            }
-
-            if (cover == 2)
-            {
-                result = pointsAdd[index].ToList().GetRange(1, 2);
-
-                for (int i = 0; i < result.Count; i++)
-                {
-                    result[i] += map.GetCoordByTileIndexes(tile.x, tile.z, tile.y);
-                }
-
-                return result;
-            }
-
-            result = pointsAdd[index].ToList();
-
-            // for (int i = 0; i < result.Count; i++)
-            // {
-            //     result[i] += map.GetCoordByTileIndexes(tile.x, tile.z, tile.y);
-            // }
-            //
-            // return result.GetRange(0, 1);
-
-            return new List<Vector3>
-            {
-                map.GetCoordByTileIndexes(tile.x, tile.z, tile.y) + new Vector3(0, 1.5f, 0)
-            };
-        }
-
 
         public override void EndTargeting()
         {

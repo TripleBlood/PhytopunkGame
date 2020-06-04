@@ -29,6 +29,7 @@ namespace DefaultNamespace
         public int ep;
         public int epRecovery;
         public int epRecoveryModifier;
+        public int epRecoverySun;
 
         //DamageModifiers?
         public int baseDamage;

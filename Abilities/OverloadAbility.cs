@@ -39,16 +39,12 @@ namespace DefaultNamespace
         private IEnumerator OverloadMain()
         {
             active = false;
-            
-            for (int i = 0; i < 3; i++)
-            {
-                Debug.Log("Overload in " + (3-i));
-                yield return new WaitForSeconds(1);
-            }
 
             ShockEffect shockEffect = new ShockEffect(target);
             
-            StartCoroutine(shockEffect.ApplyEffect(target.characterDataComponent.effects));
+            target.AddEffect(shockEffect, target.characterDataComponent.effects);
+            
+            // StartCoroutine(shockEffect.ApplyEffect(target.characterDataComponent.effects));
             
             // if (target == battleManager.currentBattleController)
             // {
@@ -62,6 +58,7 @@ namespace DefaultNamespace
             Debug.Log(description);
             
             EndEvent(out battleManager.busy);
+            yield return null;
         }
     }
 }

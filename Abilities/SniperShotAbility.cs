@@ -45,13 +45,13 @@ namespace DefaultNamespace
                 while ((projectile.transform.position - destination).magnitude >= 0.005f)
                 {
                     projectile.transform.position =
-                        Vector3.MoveTowards(projectile.transform.position, destination, 10 * Time.deltaTime);
+                        Vector3.MoveTowards(projectile.transform.position, destination, 30 * Time.deltaTime);
                     yield return null;
                 }
             }
 
             
-            targetBC.DeltaHP(-attackerBC.characterDataComponent.baseDamage + Convert.ToInt32((destination-origin).magnitude));
+            targetBC.DeltaHP(-(attackerBC.characterDataComponent.baseDamage + Convert.ToInt32((destination-origin).magnitude)*3));
             Destroy(projectile);
 
             Debug.Log(Convert.ToInt32((destination-origin).magnitude));

@@ -40,8 +40,6 @@ namespace DefaultNamespace
 
         IEnumerator Placeholder()
         {
-            yield return new WaitForSeconds(3);
-            
             GameObject projectile =
                 Instantiate(Resources.Load("Projectiles/Potion/Potion"), origin, Quaternion.identity) as GameObject;
             Debug.Log("DAMAGE!");
@@ -54,11 +52,10 @@ namespace DefaultNamespace
                 yield return null;
             }
 
-            targetBC.characterDataComponent.DeltaHP((attackerBC.characterDataComponent.baseDamage*attackerBC.characterDataComponent.baseDamage) + attackerBC.characterDataComponent.damageAddModifier);
+            targetBC.DeltaHP(-(Convert.ToInt32(attackerBC.characterDataComponent.baseDamage * attackerBC.characterDataComponent.damageMultModifier) + attackerBC.characterDataComponent.damageAddModifier));
             Destroy(projectile);
             
             EndEvent(out battleManager.busy);
         }
-        
     }
 }

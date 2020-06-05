@@ -14,12 +14,14 @@ namespace DefaultNamespace.Utils
         private Image _renderer;
         private Text text;
 
+        private bool floatUp;
+
         private int mask = ~((1 << 5) | (1 << 14) | (1 << 9)) ;
 
 
         private void Awake()
         {
-            _renderer = gameObject.GetComponent<Image>();
+            _renderer = GetComponent<Image>();
             try
             {
                 text = gameObject.GetComponentInChildren<Text>();
@@ -64,6 +66,19 @@ namespace DefaultNamespace.Utils
                         Console.WriteLine(e);
                     }
                 }
+
+                if (floatUp)
+                {
+                    pivotPoint += new Vector3(0, 0.006f, 0);
+                    Color c = text.color;
+                    c.a -= 0.005f;
+                    text.color = c;
+
+                    if (c.a <= 0)
+                    {
+                        Destroy(this);
+                    }
+                }
             }
 
             if (Input.GetKey(KeyCode.P))
@@ -95,6 +110,28 @@ namespace DefaultNamespace.Utils
         public void Initiate(Vector3 pivotPoint)
         {
             this.pivotPoint = pivotPoint;
+            
+            initiated = true;
+        }
+        
+        public void Initiate(Vector3 pivotPoint, Vector2 offset, bool floatUp, Color color)
+        {
+            this.pivotPoint = pivotPoint;
+            this.offset = offset;
+            this.floatUp = floatUp;
+
+            text.color = color;
+            
+            initiated = true;
+        }
+        
+        public void Initiate(Vector3 pivotPoint, bool floatUp, Color color)
+        {
+            this.pivotPoint = pivotPoint;
+            this.offset = offset;
+            this.floatUp = floatUp;
+
+            text.color = color;
             
             initiated = true;
         }

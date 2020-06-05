@@ -13,7 +13,7 @@ namespace DefaultNamespace.Utils
                 case "Overload":
                     return typeof(OverloadTargetingController);
                 case "Flare":
-                    return typeof(FlareTargetingController); //
+                    return typeof(FlareTargetingController); 
                 case "Adrenaline":
                     return typeof(AdrenalineTargetingController);
                 case "Stimulator":
@@ -21,11 +21,11 @@ namespace DefaultNamespace.Utils
                 case "Cryoblast":
                     return typeof(CryoblastTargetingController);
                 case "Sniper Shot":
-                    return typeof(OverloadTargetingController); //
+                    return typeof(SniperShotTargetingController); 
                 case "Splitshot":
-                    return typeof(OverloadTargetingController); //
+                    return typeof(SplitshotTargetingController);
                 case "Vulnerability Scan":
-                    return typeof(OverloadTargetingController); //
+                    return typeof(VulnerabilityScanTargetingController); 
             }
             return typeof(MoveAndAttackTargetingController);
         }
@@ -89,16 +89,16 @@ namespace DefaultNamespace.Utils
                     result[1] = 2;
                     break;
                 case "Sniper Shot":
-                    result[0] = 2;
-                    result[1] = 1;
+                    result[0] = 4;
+                    result[1] = 0;
                     break;
                 case "Splitshot":
-                    result[0] = 2;
-                    result[1] = 1;
+                    result[0] = 4;
+                    result[1] = 0;
                     break;
                 case "Vulnerability Scan":
                     result[0] = 2;
-                    result[1] = 1;
+                    result[1] = 3;
                     break;
             }
             return result;

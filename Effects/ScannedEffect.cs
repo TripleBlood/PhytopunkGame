@@ -26,7 +26,7 @@ namespace DefaultNamespace
             //effects.Add(this);
             characterBattleController.AddEffect(this, effects);
                 
-            characterBattleController.characterDataComponent.damageMultModifier *= 1.5;
+            characterBattleController.characterDataComponent.damageResistance -= 25;
             
             Debug.Log(characterBattleController.gameObject.name +  "'s Vulnerabilities are scanned!");
             yield return null;
@@ -36,7 +36,7 @@ namespace DefaultNamespace
         {
             try
             {
-                characterBattleController.characterDataComponent.damageMultModifier /= 1.5;
+                characterBattleController.characterDataComponent.damageResistance += 25;
                 
                 // characterBattleController.DestroyEffect(this, effects);
                 // effects.Remove(this);

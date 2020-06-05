@@ -36,6 +36,8 @@ namespace DefaultNamespace
         public double damageMultModifier;
         public int damageAddModifier;
 
+        public int damageResistance;
+
         public int speed;
         public int speedModifier;
 

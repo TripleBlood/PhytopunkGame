@@ -1,17 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Mime;
 using DefaultNamespace.Utils;
 using Models;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace DefaultNamespace
 {
     public class CharacterBattleController : BattleController
     {
         public CharacterDataComponent characterDataComponent;
+        public bool skipTurn;
 
         private void Start()
         {
@@ -33,6 +36,11 @@ namespace DefaultNamespace
             if (Input.GetKeyUp(KeyCode.Tab))
             {
                 this.battleManager.EndTurnBM();
+            }
+            
+            if (Input.GetKeyUp(KeyCode.J))
+            {
+                StartCoroutine(HPDeltaUI(11));
             }
         }
 
@@ -56,14 +64,27 @@ namespace DefaultNamespace
 
             foreach (Effect expiredEffect in expiredEffects)
             {
-                Destroy(expiredEffect.uiEffectController.gameObject);
-                StartCoroutine(expiredEffect.WereOffEffect(characterDataComponent.effects));
-                
+                //Destroy(expiredEffect.uiEffectController.gameObject);
+                DestroyEffect(expiredEffect, characterDataComponent.effects);
             }
 
+            // for (int i = 0; i < expiredEffects.Count; i++)
+            // {
+            //     Destroy(expiredEffects[i].uiEffectController.gameObject);
+            //     StartCoroutine(expiredEffects[i].WereOffEffect(characterDataComponent.effects));
+            // }
+
             characterDataComponent.selectionRing.SetActive(false);
-            currentTargetingController.EndTargeting();
-            Destroy(currentTargetingController);
+            try
+            {
+                currentTargetingController.EndTargeting();
+                Destroy(currentTargetingController);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
             // throw new NotImplementedException();
         }
 
@@ -73,19 +94,6 @@ namespace DefaultNamespace
         /// <exception cref="NotImplementedException"></exception>
         public override void BeginTurn()
         {
-            RecoverAPBeginTurn();
-
-            foreach (Effect effect in characterDataComponent.effects)
-            {
-                StartCoroutine(effect.BeginTurnEffect(characterDataComponent.effects));
-            }
-
-            characterDataComponent.selectionRing.SetActive(true);
-            currentTargetingController = (TargetingController) gameObject.AddComponent
-                (characterDataComponent.targetControllerTypes[0]);
-            currentTargetingController.Construct(battleManager, map, this);
-
-            UpdateAbilityIconsUI(battleManager.AbilityBtnList);
             SetMAxAPUI();
             SetCurrentAPActiveUI();
             AvertCurrentApRedUI();
@@ -98,25 +106,46 @@ namespace DefaultNamespace
 
             UpdateHPUI();
             UpdateEffects();
+            
+            if (characterDataComponent.position.IsIlluminated)
+            {
+                DeltaEP(characterDataComponent.epRecoverySun);
+            }
+
+            foreach (Effect effect in characterDataComponent.effects)
+            {
+                StartCoroutine(effect.BeginTurnEffect(characterDataComponent.effects));
+            }
+
+            if (skipTurn)
+            {
+                skipTurn = false;
+                this.battleManager.EndTurnBM();
+                return;
+            }
+            
+            RecoverAPBeginTurn();
+            DeltaEP(characterDataComponent.epRecovery + characterDataComponent.epRecoveryModifier);
+
+            characterDataComponent.selectionRing.SetActive(true);
+            currentTargetingController = (TargetingController) gameObject.AddComponent
+                (characterDataComponent.targetControllerTypes[0]);
+            currentTargetingController.Construct(battleManager, map, this);
+
+            UpdateAbilityIconsUI(battleManager.AbilityBtnList);
+
+            for (int i = 1; i < characterDataComponent.targetControllerTypes.Count; i++)
+            {
+                SetCD(characterDataComponent.targetControllerTypes[i], characterDataComponent.abilityCooldowns[i] - 1);
+            }
+            
+            
         }
         
         // ———————————————— Variables delta Block ———————————————— //
 
         public void RecoverAPBeginTurn()
         {
-            // Notify Observer!?
-            // if (characterDataComponent.ap +
-            //     (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier) <
-            //     characterDataComponent.baseAP)
-            // {
-            //     characterDataComponent.ap +=
-            //         (characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier);
-            // }
-            // else
-            // {
-            //     characterDataComponent.ap = characterDataComponent.baseAP;
-            // }
-            
             DeltaAP(characterDataComponent.apRecovery + characterDataComponent.apRecoveryModifier);
         }
         
@@ -159,6 +188,16 @@ namespace DefaultNamespace
                 SetMAxEPUI();
                 SetCurrentEPActiveUI();
                 AvertCurrentEpRedUI();
+            }
+        }
+
+        public void DeltaHP(int delta)
+        {
+            characterDataComponent.DeltaHP(Convert.ToInt32(delta * ((double)(100 - characterDataComponent.damageResistance )/(double)100)));
+            StartCoroutine(HPDeltaUI(Convert.ToInt32(delta * ((double) (100 - characterDataComponent.damageResistance) / (double) 100))));
+            if (battleManager.currentBattleController == this)
+            {
+                UpdateHPUI();
             }
         }
         
@@ -222,6 +261,16 @@ namespace DefaultNamespace
         {
             battleManager.Hp.GetComponent<Image>().fillAmount =
                 (float) characterDataComponent.hp / (float) characterDataComponent.baseHP;
+
+            try
+            {
+                Text text = battleManager.Hp.transform.Find("HPNumber").gameObject.GetComponent<Text>();
+                text.text = characterDataComponent.hp + " / " + characterDataComponent.baseHP;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void SetMAxAPUI()
@@ -331,6 +380,49 @@ namespace DefaultNamespace
             }
         }
 
+        public void UpdateCooldownUI(Type type)
+        {
+            int index;
+
+            index = characterDataComponent.targetControllerTypes.IndexOf(type);
+            if (index != null)
+            {
+                GameObject button;
+                button = battleManager.AbilityBtnList[index - 1];
+                if (characterDataComponent.abilityCooldowns[index] > 0)
+                {
+                    button.GetComponent<Button>().interactable = false;
+                    button.transform.Find("Cooldown").gameObject.SetActive(true);
+                    button.transform.Find("Cooldown").gameObject.GetComponent<Text>().text =
+                        characterDataComponent.abilityCooldowns[index].ToString();
+                }
+                else
+                {
+                    button.GetComponent<Button>().interactable = true;
+                    button.transform.Find("Cooldown").gameObject.SetActive(false);
+                }
+            }
+        }
+
+        public void SetCD(Type type, int turns)
+        {
+            if (turns < 0)
+            {
+                turns = 0;
+            }
+            int index;
+
+            index = characterDataComponent.targetControllerTypes.IndexOf(type);
+            if (index != null)
+            {
+                characterDataComponent.abilityCooldowns[index] = turns;
+                if (battleManager.currentBattleController == this)
+                {
+                    UpdateCooldownUI(type);
+                }
+            }
+        }
+
         public void UpdateEffects()
         {
             for (int i = 0; i < battleManager.EffectPanel.transform.childCount; i++)
@@ -348,6 +440,11 @@ namespace DefaultNamespace
             }
         }
 
+        public void TryAddEffect(Effect effect, List<Effect> effects)
+        {
+            StartCoroutine(effect.ApplyEffect(effects));
+        }
+        
         public void AddEffect(Effect effect, List<Effect> effects)
         {
             if (effects == characterDataComponent.effects)
@@ -360,8 +457,11 @@ namespace DefaultNamespace
                     effect.uiEffectController.UpdatCounter(effect.duration.ToString());
                     effect.uiEffectController.UpdateIcon(effect.iconResourceURL);
                 }
+                
+                effects.Add(effect);
+
+                // StartCoroutine(effect.ApplyEffect(effects));
             }
-            
         }
         
         public void DestroyEffect(Effect effect, List<Effect> effects)
@@ -370,8 +470,13 @@ namespace DefaultNamespace
             {
                 try
                 {
-                    Destroy(effect.uiEffectController.gameObject);
+                    if (this == battleManager.currentBattleController)
+                    {
+                        Destroy(effect.uiEffectController.gameObject);
+                    }
+
                     StartCoroutine(effect.WereOffEffect(effects));
+                    effects.Remove(effect);
                 }
                 catch (Exception e)
                 {
@@ -379,6 +484,39 @@ namespace DefaultNamespace
                     throw;
                 }
             }
+        }
+
+        public IEnumerator HPDeltaUI(int delta)
+        {
+            Color color;
+            if (delta > 0)
+            {
+                color = Color.green;
+            }
+            else
+            {
+                color = Color.red;
+            }
+            
+            Tile curTile = characterDataComponent.position;
+            Vector3 curTilePoint = map.GetCoordByTileIndexes(curTile.x, curTile.z, curTile.y);
+
+            float yRandom = Random.Range(0, 1);
+            float xRandom = Random.Range(-0.5f, +0.5f);
+            float zRandom = Random.Range(-0.5f, +0.5f);
+            
+            
+            Vector3 randomOffset = new Vector3(xRandom, yRandom, zRandom);
+            
+            Vector3 vect = curTilePoint + new Vector3(0, 1.5f, 0) + randomOffset;
+            Vector2 vect2 = Camera.main.WorldToScreenPoint(vect);
+
+            GameObject text =
+                Instantiate(Resources.Load("UIElements/MoveStep")) as GameObject;
+            text.transform.SetParent(battleManager.mainUI.transform, false);
+            text.GetComponent<UIinSpace>().Initiate(vect, true, color);
+            text.GetComponent<UIinSpace>().ChangeText(delta.ToString());
+            yield return null;
         }
     }
 }
